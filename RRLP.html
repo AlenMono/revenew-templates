@@ -72,6 +72,7 @@
         }
 
         #suggestions {
+            display: none;
             list-style: none;
             padding-left: 0;
             position: absolute;
@@ -243,7 +244,8 @@
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <div class="filter-group" style="position: relative;">
                 <span>📍</span>
-                <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code" autocomplete="off" />
+                <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code"
+                    autocomplete="off" />
                 <ul id="suggestions"></ul>
             </div>
 
@@ -312,16 +314,23 @@
     <script>
         const input = document.getElementById("cityInput");
         const suggestions = document.getElementById("suggestions");
+        const container = document.getElementById("cardsContainer");
+
+        const selectedCuisines = new Set();
+        const selectedPrices = new Set();
+        
+        let selectedRating = 0;
+        let openIndex = null;
         let debounceTimeout;
 
-        function debounce(func, delay) {
+        const debounce = (func, delay) => {
             return function (...args) {
                 clearTimeout(debounceTimeout);
                 debounceTimeout = setTimeout(() => func.apply(this, args), delay);
             };
         }
 
-        async function fetchCities(query) {
+        const fetchCities = async (query) => {
             if (!query) {
                 suggestions.innerHTML = "";
                 return;
@@ -346,9 +355,10 @@
             }
         }
 
-
-        function displaySuggestions(cities) {
+        const displaySuggestions = (cities) => {
             suggestions.innerHTML = "";
+            suggestions.style.display = cities.length ? "block" : "none";
+            
             cities.forEach((city) => {
                 const li = document.createElement("li");
                 li.textContent = city.name;
@@ -356,12 +366,15 @@
                 li.style.cursor = "pointer";
                 li.style.padding = "8px 10px";
                 li.style.fontSize = "14px";
-
+                
                 li.addEventListener("click", () => {
                     input.cityId = city.id;
                     input.value = city.name;
+
                     suggestions.innerHTML = "";
+                    suggestions.style.display = "none";
                 });
+            
                 suggestions.appendChild(li);
             });
         }
@@ -374,11 +387,7 @@
             }, 400)
         );
 
-        let selectedCuisines = new Set();
-        let selectedPrice = null;
-        let selectedRating = 0;
-
-        function selectCuisine(button) {
+        const selectCuisine = (button) => {
             if (button.innerText === "Select All") {
                 const allSelected = Array.from(document.querySelectorAll('.cuisine-group button'))
                     .filter(b => b.innerText !== "Select All")
@@ -404,13 +413,17 @@
             }
         }
 
-        function selectPrice(button) {
-            document.querySelectorAll(".price-group button").forEach((btn) => btn.classList.remove("selected"));
-            button.classList.add("selected");
-            selectedPrice = button.innerText;
-        }
+        const selectPrice = (button) => {
+            button.classList.toggle("selected");
+            
+            if (button.classList.contains("selected")) {
+                selectedPrices.add(button.innerText);
+            } else {
+                selectedPrices.delete(button.innerText);
+            }
+        };
 
-        function setRating(rating) {
+        const setRating = (rating) => {
             selectedRating = rating;
             document.querySelectorAll("#starRating span").forEach((star, i) => {
                 star.classList.toggle("selected", i < rating);
@@ -429,7 +442,7 @@
                 sort,
                 openNow,
                 cuisines: Array.from(selectedCuisines),
-                price: selectedPrice,
+                price: Array.from(selectedPrices),
                 minRating: selectedRating,
             };
 
@@ -447,31 +460,31 @@
                     // "Authorization": "Basic {apiKey}"
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                return response.text().then(text => {
-                    if (!text) {
-                        console.warn("Empty response body");
-                        return {};
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return JSON.parse(text);
+
+                    return response.text().then(text => {
+                        if (!text) {
+                            console.warn("Empty response body");
+                            return {};
+                        }
+                        return JSON.parse(text);
+                    });
+                })
+                .then(data => {
+                    console.log("Filtered Data:", data);
+
+                    if (data.length > 0) {
+                        showRestaurantListCard(data)
+                    } else {
+                        showToast("No results found!");
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
                 });
-            })
-            .then(data => {
-                console.log("Filtered Data:", data);
-                
-                if(data.length > 0) {
-                    showRestaurantListCard(data)
-                } else {
-                    showToast("No results found!");
-                }
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
-            });
         }
 
         function clearFilter() {
@@ -485,7 +498,7 @@
             });
 
             selectedCuisines.clear();
-            selectedPrice = null;
+            selectedPrices.clear();
             setRating(0);
         }
 
@@ -525,14 +538,22 @@
             }
         }
 
-        const container = document.getElementById("cardsContainer");
+        const renderStars = (rating) => {
+            const stars = [];
 
-        let openIndex = null;
+            for (let i = 1; i <= 5; i++) {
+                stars.push(`<span class="${i <= rating ? 'selected' : ''}" style="line-height: 1;">★</span>`);
+            }
+
+            return stars.join('');
+        }
 
         const showRestaurantListCard = (data) => {
-            if(data.length === 0) {
+            if (data.length === 0) {
                 showToast("No results found")
             }
+
+            container.innerHTML = "";
 
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
@@ -546,7 +567,7 @@
                     <div class="results__rating">
                         <div class="stars">
                             <span class="selected" style="line-height: 1;">★</span>
-                            </div>
+                        </div>
                         <p>${restaurant.ratingAverage} (${restaurant.ratingCount})</p>
                         <p>$$$$</p>
                     </div>
@@ -566,12 +587,13 @@
                         ${restaurant.buttonCaption}
                     </a>
                 `;
-                            
+
                 card.addEventListener("click", () => {
                     showDetailCard(data, index);
                 });
+
                 container.appendChild(card);
-                
+
                 if ((index + 1) % 3 === 0) {
                     const detailRow = document.createElement("div");
                     detailRow.className = "detail-row";
@@ -631,9 +653,12 @@
 
             imgArr.forEach((image, index) => {
                 const slide = document.createElement("div");
+                
                 slide.className = "slide";
                 slide.style.backgroundImage = `url(${image})`;
+
                 if (index === 0) slide.classList.add("active");
+                
                 slider.appendChild(slide);
             });
 
@@ -649,7 +674,9 @@
                 if (newIndex < 0 || newIndex >= imgArr.length) return;
 
                 slides()[currentIndex].classList.remove("active");
+
                 currentIndex = newIndex;
+
                 slides()[currentIndex].classList.add("active");
 
                 updateArrows();
@@ -658,7 +685,7 @@
             leftArrow.addEventListener("click", () => updateSlide(currentIndex - 1));
             rightArrow.addEventListener("click", () => updateSlide(currentIndex + 1));
 
-            updateArrows(); // initialize arrow state
+            updateArrows();
 
             sliderWrapper.appendChild(leftArrow);
             sliderWrapper.appendChild(slider);
@@ -684,6 +711,7 @@
 
             const detailCard = document.createElement("div");
             detailCard.className = "detail-card";
+
             detailCard.innerHTML = `
                 <div class="detail-card__media">                    
                     <div id="carousel-container"></div>
@@ -691,13 +719,9 @@
                     <h3>${data[index].retailer}</h3>
                     <div class="results__rating">
                         <div class="stars">
-                            <span class="selected" style="line-height: 1;">★</span>
-                            <span class="selected" style="line-height: 1;">★</span>
-                            <span class="selected" style="line-height: 1;">★</span>
-                            <span class="selected" style="line-height: 1;">★</span>
-                            <span class="selected" style="line-height: 1;">★</span>
+                            ${renderStars(data[index].ratingAverage)}
                         </div>
-                        <p>${data[index].ratingAverage} (1023)</š>
+                        <p>${data[index].ratingAverage} (1023)</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 12 12" id="Navigation-Next-Hexagon-2--Streamline-Cyber" height="50" width="50">
@@ -716,30 +740,7 @@
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid #555; width: 100%;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Sunday</p>
-                            <p>${data[index]?.workingHours?.sunday}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Monday</p>
-                            <p>${data[index]?.workingHours?.monday}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Tuesday</p>
-                            <p>${data[index]?.workingHours?.tuesday}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Wednesday</p>
-                            <p>${data[index]?.workingHours?.wednesday}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Thursday</p>
-                            <p>${data[index]?.workingHours?.thursday}</p>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
-                            <p>Friday</p>
-                            <p>${data[index]?.workingHours?.friday}</p>
-                        </div>
+                        ${showWorkingHours(data[index]?.workingHours)}
                     </div>
                 </div>
                 
@@ -761,12 +762,53 @@
                     </div>
                 </div>
             `;
-            
-            
+
+
             detailRow.appendChild(detailCard);
             openIndex = index;
+
             showImageSlider(data[index].images);
+        }
+
+        const showWorkingHours = (hours) => {    
+            const parsedHours = JSON.parse(hours);
+
+            const fullDayMap = {
+                Mon: 'Monday',
+                Tue: 'Tuesday',
+                Wed: 'Wednesday',
+                Thu: 'Thursday',
+                Fri: 'Friday',
+                Sat: 'Saturday',
+                Sun: 'Sunday'
+            };
+
+            const html = parsedHours.map(entry => {
+                const dayName = fullDayMap[entry.dayOfWeek] || entry.dayOfWeek;
+                if (!entry.openForBusiness || !entry.dayHours.length) {
+                    return `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+                            <p>${dayName}</p>
+                            <p>Closed</p>
+                        </div>
+                    `;
+                }
+
+                const hoursStr = entry.dayHours
+                    .map(period => `${period.open} – ${period.close}`)
+                    .join(', ');
+
+                return `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+                        <p>${dayName}</p>
+                        <p>${hoursStr}</p>
+                    </div>
+                `;
+            }).join('');
+
+            return html;
         }
     </script>
 </body>
+
 </html>
