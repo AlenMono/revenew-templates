@@ -406,6 +406,7 @@
         const fetchCities = async (query) => {
             if (!query) {
                 suggestions.innerHTML = "";
+                input.cityId = null
                 return;
             }
 
@@ -488,11 +489,12 @@
 
         const selectPrice = (button) => {
             button.classList.toggle("selected");
+            const priceLevel = button.innerText.trim().lastIndexOf('$') + 1; 
 
             if (button.classList.contains("selected")) {
-                selectedPrices.add(button.innerText);
+                selectedPrices.add(priceLevel);
             } else {
-                selectedPrices.delete(button.innerText);
+                selectedPrices.delete(priceLevel);
             }
         };
 
@@ -518,7 +520,7 @@
                 sort,
                 openNow,
                 cuisines: Array.from(selectedCuisines),
-                price: Array.from(selectedPrices),
+                priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
             };
 
@@ -835,7 +837,7 @@
                     ${data[index].offerDetails}
 
                     <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px;">
-                        <a href="${data[index].menuUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
+                        <a href="${data[index].retailerUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
                             ${data[index].buttonCaption}
                         </a>                    
                     </div>
