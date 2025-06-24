@@ -19,6 +19,52 @@
             box-sizing: border-box;
         }
 
+        .btn--apply {
+            padding: 10px 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn--apply svg {
+            transition: all 0.3s ease;
+            fill: #000;
+        }
+        
+        .btn--apply:hover {
+            background-color: #000000;
+            color: white;
+        }
+
+        .btn--apply:hover svg {
+            fill: white;
+        }
+        
+        .btn--clear {
+            margin-left: 12px;
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+
+            color: #555;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn--clear:hover {
+            background-color: #000000;
+            color: white;
+        }
+
+        .filter__footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
         .selected {
             border-color: red !important;
             background-color: #ffe;
@@ -69,6 +115,20 @@
 
         .stars .selected {
             color: gold;
+        }
+
+        .card-opened {
+            position: relative;
+            border: 2px solid #008555 !important;
+            z-index: 1;
+        }
+
+        .arrow-bottom {
+            display: none;
+        }
+
+        .card-opened .arrow-bottom {
+            display: block;
         }
 
         #suggestions {
@@ -280,28 +340,40 @@
             <button onclick="selectCuisine(this)">Chinese</button>
         </div>
 
-        <div class="filter-group price-group">
-            <label>Price</label>
-            <button onclick="selectPrice(this)">$</button>
-            <button onclick="selectPrice(this)">$$</button>
-            <button onclick="selectPrice(this)">$$$</button>
-            <button onclick="selectPrice(this)">$$$$</button>
-        </div>
+        <div style="display: flex; gap: 12px;">
+            <div class="filter-group price-group">
+                <label>Price</label>
+                <button onclick="selectPrice(this)">$</button>
+                <button onclick="selectPrice(this)">$$</button>
+                <button onclick="selectPrice(this)">$$$</button>
+                <button onclick="selectPrice(this)">$$$$</button>
+            </div>
 
-        <div class="filter-group">
-            <label>Minimum Rating</label>
-            <div class="stars" id="starRating">
-                <span onclick="setRating(1)">★</span>
-                <span onclick="setRating(2)">★</span>
-                <span onclick="setRating(3)">★</span>
-                <span onclick="setRating(4)">★</span>
-                <span onclick="setRating(5)">★</span>
+            <div class="filter-group" style="display: flex; align-items: center; gap: 8px">
+                <label>Minimum Rating</label>
+                <div class="stars" id="starRating">
+                    <span onclick="setRating(1)">★</span>
+                    <span onclick="setRating(2)">★</span>
+                    <span onclick="setRating(3)">★</span>
+                    <span onclick="setRating(4)">★</span>
+                    <span onclick="setRating(5)">★</span>
+                </div>
             </div>
         </div>
 
-        <div class="filter-group">
-            <button onclick="applyFilter()" style="padding: 10px 20px;">🔧 Apply Filter</button>
-            <button onclick="clearFilter()" style="margin-left: 12px; padding: 12px 20px;">Clear Filter</button>
+        <div class="filter__footer">
+            <div></div>
+            <button onclick="applyFilter()" class="btn--apply">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                    <path fill="" fill-rule="evenodd"
+                        d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Apply Filter
+            </button>
+            <button onclick="clearFilter()" class="btn--clear">
+                Clear Filter
+            </button>
         </div>
     </div>
 
@@ -588,6 +660,10 @@
                     <a href="${restaurant.retailerUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
                         ${restaurant.buttonCaption}
                     </a>
+
+                     <div class="arrow-bottom"
+                        style="position: absolute; bottom: -12px; width:22px; height: 22px; border-left: 2px solid #008555; border-bottom: 2px solid #008555; transform: rotate(-45deg); border-top-right-radius: 50px; background: #fff">
+                    </div>
                 `;
 
                 card.addEventListener("click", () => {
@@ -631,7 +707,7 @@
         }
 
         const showImageSlider = (images) => {
-            const imgArr = JSON.parse(images);
+            const imgArr = typeof images === 'string' ? JSON.parse(images) : images;
             const container = document.getElementById("carousel-container");
 
             if (!container) {
@@ -698,6 +774,11 @@
         function showDetailCard(data, index) {
             const rowIndex = Math.floor(index / 3);
             const detailRow = document.querySelectorAll(".detail-row")[rowIndex];
+
+            const cardElements = document.querySelectorAll(".results__list__item");
+
+            // 🔴 Step 1: Remove red border from all cards
+            cardElements.forEach(card => card.classList.remove("card-opened"));
 
             // If the same card is clicked again, close it
             if (openIndex === index) {
@@ -769,11 +850,13 @@
             detailRow.appendChild(detailCard);
             openIndex = index;
 
+            cardElements[index].classList.add("card-opened");
+
             showImageSlider(data[index].images);
         }
 
         const showWorkingHours = (hours) => {
-            const parsedHours = JSON.parse(hours);
+            const parsedHours = typeof hours === 'string' ? JSON.parse(hours) : hours;
 
             const fullDayMap = {
                 Mon: 'Monday',
