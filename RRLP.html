@@ -318,10 +318,11 @@
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
-        
+
         let selectedRating = 0;
         let openIndex = null;
         let debounceTimeout;
+        let lat, lon;
 
         const debounce = (func, delay) => {
             return function (...args) {
@@ -358,7 +359,7 @@
         const displaySuggestions = (cities) => {
             suggestions.innerHTML = "";
             suggestions.style.display = cities.length ? "block" : "none";
-            
+
             cities.forEach((city) => {
                 const li = document.createElement("li");
                 li.textContent = city.name;
@@ -366,7 +367,7 @@
                 li.style.cursor = "pointer";
                 li.style.padding = "8px 10px";
                 li.style.fontSize = "14px";
-                
+
                 li.addEventListener("click", () => {
                     input.cityId = city.id;
                     input.value = city.name;
@@ -374,7 +375,7 @@
                     suggestions.innerHTML = "";
                     suggestions.style.display = "none";
                 });
-            
+
                 suggestions.appendChild(li);
             });
         }
@@ -415,7 +416,7 @@
 
         const selectPrice = (button) => {
             button.classList.toggle("selected");
-            
+
             if (button.classList.contains("selected")) {
                 selectedPrices.add(button.innerText);
             } else {
@@ -437,6 +438,9 @@
             const openNow = document.getElementById("openNow").checked;
 
             const filters = {
+                lat,
+                lon,
+                currentTime: new Date().toISOString(),
                 locationId,
                 radius: parseInt(radius),
                 sort,
@@ -515,10 +519,8 @@
         };
 
         function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            return { lat, lon };
+            lat = position.coords.latitude.toFixed(2);
+            lon = position.coords.longitude.toFixed(2);
         }
 
         function handleError(error) {
@@ -653,12 +655,12 @@
 
             imgArr.forEach((image, index) => {
                 const slide = document.createElement("div");
-                
+
                 slide.className = "slide";
                 slide.style.backgroundImage = `url(${image})`;
 
                 if (index === 0) slide.classList.add("active");
-                
+
                 slider.appendChild(slide);
             });
 
@@ -770,7 +772,7 @@
             showImageSlider(data[index].images);
         }
 
-        const showWorkingHours = (hours) => {    
+        const showWorkingHours = (hours) => {
             const parsedHours = JSON.parse(hours);
 
             const fullDayMap = {
