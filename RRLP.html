@@ -28,12 +28,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .btn--apply svg {
             transition: all 0.3s ease;
             fill: #000;
         }
-        
+
         .btn--apply:hover {
             background-color: #000000;
             color: white;
@@ -42,7 +42,7 @@
         .btn--apply:hover svg {
             fill: white;
         }
-        
+
         .btn--clear {
             margin-left: 12px;
             padding: 12px 20px;
@@ -329,15 +329,9 @@
             </div>
         </div>
 
-        <div class="filter-group cuisine-group">
+        <div class="filter-group cuisine-group" style="display: flex; align-items: center;">
             <label>Cuisine</label>
-            <button onclick="selectCuisine(this)">Select All</button>
-            <button onclick="selectCuisine(this)">Mexican</button>
-            <button onclick="selectCuisine(this)">Italian</button>
-            <button onclick="selectCuisine(this)">American</button>
-            <button onclick="selectCuisine(this)">Thai</button>
-            <button onclick="selectCuisine(this)">Ethiopian</button>
-            <button onclick="selectCuisine(this)">Chinese</button>
+            <div id="cuisineList"></div>
         </div>
 
         <div style="display: flex; gap: 12px;">
@@ -390,7 +384,7 @@
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
-
+        
         let selectedRating = 0;
         let openIndex = null;
         let debounceTimeout;
@@ -489,7 +483,7 @@
 
         const selectPrice = (button) => {
             button.classList.toggle("selected");
-            const priceLevel = button.innerText.trim().lastIndexOf('$') + 1; 
+            const priceLevel = button.innerText.trim().lastIndexOf('$') + 1;
 
             if (button.classList.contains("selected")) {
                 selectedPrices.add(priceLevel);
@@ -538,31 +532,33 @@
                     // "Authorization": "Basic {apiKey}"
                 }
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                    return response.text().then(text => {
-                        if (!text) {
-                            console.warn("Empty response body");
-                            return {};
-                        }
-                        return JSON.parse(text);
-                    });
-                })
-                .then(data => {
-                    console.log("Filtered Data:", data);
-
-                    if (data.length > 0) {
-                        showRestaurantListCard(data)
-                    } else {
-                        showToast("No results found!");
+                return response.text().then(text => {
+                    if (!text) {
+                        console.warn("Empty response body");
+                        return {};
                     }
-                })
-                .catch(error => {
-                    console.error("Fetch error:", error);
+                    return JSON.parse(text);
                 });
+            })
+            .then(data => {
+                console.log("Filtered Data:", data);
+
+                showCuisineList(data.cuisine);
+
+                if (data.restaurants.length > 0) {
+                    showRestaurantListCard(data.restaurants)
+                } else {
+                    showToast("No results found!");
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+            });
         }
 
         function clearFilter() {
@@ -590,7 +586,30 @@
             } else {
                 alert("Geolocation is not supported by this browser.");
             }
+
+            applyFilter();
         };
+
+        const showCuisineList = (dataArray) => {
+            const cuisineList = document.getElementById("cuisineList");
+            cuisineList.innerHTML = "";
+
+            dataArray.forEach((item) => {
+                const cuisineButton = document.createElement("button");
+                cuisineButton.textContent = item;
+
+                if (selectedCuisines.has(item)) {
+                    cuisineButton.classList.add("selected");
+                }
+
+                cuisineButton.addEventListener("click", () => {
+                    selectCuisine(cuisineButton);
+                });
+
+                cuisineList.appendChild(cuisineButton);
+            });
+        };
+
 
         function showPosition(position) {
             lat = position.coords.latitude.toFixed(2);
@@ -624,13 +643,19 @@
             return stars.join('');
         }
 
+        const renderPrice = (price) => {
+            if (price === null) {
+                return '$'
+            }
+            return '$'.repeat(price);
+        };
+
         const showRestaurantListCard = (data) => {
             if (data.length === 0) {
                 showToast("No results found")
             }
 
             container.innerHTML = "";
-
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
                 card.classList = "results__list__item";
@@ -645,7 +670,7 @@
                             <span class="selected" style="line-height: 1;">★</span>
                         </div>
                         <p>${restaurant.ratingAverage} (${restaurant.ratingCount})</p>
-                        <p>$$$$</p>
+                        <p>${renderPrice(restaurant.priceRange)}</p>
                     </div>
                     
 
@@ -775,11 +800,10 @@
 
         function showDetailCard(data, index) {
             const rowIndex = Math.floor(index / 3);
-            const detailRow = document.querySelectorAll(".detail-row")[rowIndex];
+            let detailRow = document.querySelectorAll(".detail-row")[rowIndex];
 
             const cardElements = document.querySelectorAll(".results__list__item");
 
-            // 🔴 Step 1: Remove red border from all cards
             cardElements.forEach(card => card.classList.remove("card-opened"));
 
             // If the same card is clicked again, close it
@@ -788,6 +812,16 @@
                 detailRow.classList.remove("is-open");
                 openIndex = null;
                 return;
+            }
+
+            if (!detailRow) {
+                const newDetailRow = document.createElement("div");
+                newDetailRow.className = "detail-row";
+
+                const lastCard = cardElements[cardElements.length - 1];
+                lastCard.parentNode.insertBefore(newDetailRow, lastCard.nextSibling);
+                
+                detailRow = newDetailRow;
             }
 
             // Close any open detail card
@@ -835,6 +869,13 @@
                     </div>
                     
                     ${data[index].offerDetails}
+
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <p style="font-weight: bold;">Price Range:</p>
+                        <p>
+                            ${renderPrice(data[index].priceRange)}
+                        </p>
+                    </div>
 
                     <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px;">
                         <a href="${data[index].retailerUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
