@@ -329,8 +329,12 @@
             </div>
         </div>
 
-        <div class="filter-group cuisine-group" style="display: flex; align-items: center;">
-            <label>Cuisine</label>
+        <div class="filter-group cuisine-group" style="display: flex; align-items: flex-start; gap: 30px">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label>Cuisine</label>
+                <button onclick="selectCuisine(this)" style="padding-left: 30px; padding-right: 30px; white-space: nowrap;">Select All</button>
+            </div>
+            
             <div id="cuisineList"></div>
         </div>
 
@@ -456,30 +460,47 @@
         );
 
         const selectCuisine = (button) => {
-            if (button.innerText === "Select All") {
-                const allSelected = Array.from(document.querySelectorAll('.cuisine-group button'))
-                    .filter(b => b.innerText !== "Select All")
-                    .every(btn => btn.classList.contains('selected'));
+            const allButtons = Array.from(document.querySelectorAll('.cuisine-group button'));
+            const cuisineButtons = allButtons.filter(b => b.innerText !== "Select All");
 
-                document.querySelectorAll('.cuisine-group button').forEach(btn => {
-                    if (btn.innerText !== "Select All") {
-                        btn.classList.toggle('selected', !allSelected);
-                        if (!allSelected) {
-                            selectedCuisines.add(btn.innerText);
-                        } else {
-                            selectedCuisines.delete(btn.innerText);
-                        }
+            if (button.innerText === "Select All") {
+                const allSelected = cuisineButtons.every(btn => btn.classList.contains('selected'));
+
+                cuisineButtons.forEach(btn => {
+                    btn.classList.toggle('selected', !allSelected);
+                    if (!allSelected) {
+                        selectedCuisines.add(btn.innerText);
+                    } else {
+                        selectedCuisines.delete(btn.innerText);
                     }
                 });
+
+                button.classList.toggle('selected', !allSelected);
+                if (!allSelected) {
+                    selectedCuisines.add("Select All");
+                } else {
+                    selectedCuisines.delete("Select All");
+                }
             } else {
                 button.classList.toggle("selected");
+
                 if (button.classList.contains("selected")) {
                     selectedCuisines.add(button.innerText);
                 } else {
                     selectedCuisines.delete(button.innerText);
                 }
+
+                const allSelected = cuisineButtons.every(btn => btn.classList.contains('selected'));
+                const selectAllBtn = allButtons.find(b => b.innerText === "Select All");
+
+                selectAllBtn.classList.toggle("selected", allSelected);
+                if (allSelected) {
+                    selectedCuisines.add("Select All");
+                } else {
+                    selectedCuisines.delete("Select All");
+                }
             }
-        }
+        };
 
         const selectPrice = (button) => {
             button.classList.toggle("selected");
@@ -513,9 +534,11 @@
                 radius: parseInt(radius),
                 sort,
                 openNow,
-                cuisines: Array.from(selectedCuisines),
+                cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
+                pageNumber: 1,
+                pageSize: 21
             };
 
             //const api = 'http://localhost:60839/api';
@@ -574,21 +597,11 @@
             selectedCuisines.clear();
             selectedPrices.clear();
             setRating(0);
+            resetLocation();
         }
 
         // Set default rating visual
         setRating(selectedRating);
-
-        // GET LOCATION 
-        window.onload = function () {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, handleError);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-
-            applyFilter();
-        };
 
         const showCuisineList = (dataArray) => {
             const cuisineList = document.getElementById("cuisineList");
@@ -610,10 +623,19 @@
             });
         };
 
-
         function showPosition(position) {
             lat = position.coords.latitude.toFixed(2);
             lon = position.coords.longitude.toFixed(2);
+
+            input.value = "Current Location";
+        }
+
+        function resetLocation() {
+            input.value = "";
+            locationId = null;
+
+            lat = null;
+            lon = null;
         }
 
         function handleError(error) {
@@ -936,6 +958,15 @@
 
             return html;
         }
+
+        // GET LOCATION 
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, handleError);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+
+        applyFilter();
     </script>
 </body>
 
