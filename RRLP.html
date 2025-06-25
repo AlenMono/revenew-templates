@@ -204,6 +204,14 @@
             border: 1px solid #e74c3c;
 
             text-decoration: none;
+            cursor: pointer;
+
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn--primary:hover {
+            background-color: #c0392b;
+            border: 1px solid #c0392b;
         }
 
         .detail-row {
@@ -398,7 +406,8 @@
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
-        
+        let restaurants = [];
+
         let selectedRating = 0;
         let selectedPage = 1;
         let openIndex = null;
@@ -532,8 +541,12 @@
                     star.classList.toggle("selected", i < rating);
                 }
             });
-            
-            selectedRating = rating;
+
+            if(selectedRating === rating) {
+                selectedRating = 0;
+            } else {
+                selectedRating = rating;
+            }
         }
 
         function applyFilter(isShowMore) {
@@ -586,21 +599,28 @@
             })
             .then(data => {
                 console.log("Filtered Data:", data);
-                
+
                 showCuisineList(data.cuisine);
 
                 if (data.restaurants.length > 0) {
-                    showRestaurantListCard(data.restaurants, isShowMore)
+                    const combined = [...restaurants, ...data.restaurants];
+
+                    const seen = new Set();
+                    restaurants = combined.filter(r => {
+                        const key = `${r.name}-${r.address}`;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    });
+
+                    showRestaurantListCard(restaurants);
+
                     restaurantsResult.style.display = "block";
                 } else {
                     showToast("No results found!");
                 }
 
-                if(!data.hasNextPage) {
-                    document.getElementById("loadMore").style.display = "none";
-                } else {
-                    document.getElementById("loadMore").style.display = "flex";
-                }
+                document.getElementById("loadMore").style.display = data.hasNextPage ? "flex" : "none";
             })
             .catch(error => {
                 console.error("Fetch error:", error);
@@ -628,7 +648,6 @@
             resetLocation();
         }
 
-        // Set default rating visual
         setRating(selectedRating);
 
         const showCuisineList = (dataArray) => {
@@ -700,14 +719,8 @@
             return '$'.repeat(price);
         };
 
-        const showRestaurantListCard = (data, isShowMore) => {
-            if (data.length === 0) {
-                showToast("No results found")
-            }
-
-            if(!isShowMore) {
-                container.innerHTML = "";
-            }
+        const showRestaurantListCard = (data) => {
+            container.innerHTML = "";
 
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
