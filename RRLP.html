@@ -19,6 +19,18 @@
             box-sizing: border-box;
         }
 
+        .card--primary {
+            display: flex;
+            flex-direction: column;
+            
+            max-width: 1080px;
+            margin: 0 auto;
+
+            padding: 16px;
+
+            background-color: #eee;
+        }
+
         .btn--apply {
             padding: 10px 20px;
             display: flex;
@@ -154,13 +166,6 @@
             /* SET AS VARIABLE */
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-
-            max-width: 1080px;
-            margin: 0 auto;
-
-            padding: 16px;
-
-            background-color: #eee;
         }
 
         .results__list__item {
@@ -190,7 +195,7 @@
             gap: 4px;
         }
 
-        .results__list__item__button {
+        .btn--primary {
             padding: 12px 24px;
 
             color: #fff;
@@ -377,8 +382,13 @@
 
     <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
 
-    <div class="results__list" id="cardsContainer">
+    <div class="card--primary" id="restaurantsResult" style="display: none;">
         <!-- Cards will be inserted here by JS -->
+        <div class="results__list" id="cardsContainer"></div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;" id="loadMore">
+            <button class="btn--primary" onclick="loadMore()">Show More</button>
+        </div>
     </div>
 
     <script>
@@ -390,9 +400,9 @@
         const selectedPrices = new Set();
         
         let selectedRating = 0;
+        let selectedPage = 1;
         let openIndex = null;
-        let debounceTimeout;
-        let lat, lon;
+        let lat, lon, hasNextPage, debounceTimeout;
 
         const debounce = (func, delay) => {
             return function (...args) {
@@ -514,13 +524,19 @@
         };
 
         const setRating = (rating) => {
-            selectedRating = rating;
+            
             document.querySelectorAll("#starRating span").forEach((star, i) => {
-                star.classList.toggle("selected", i < rating);
+                if(selectedRating === rating) {
+                    star.classList.toggle("selected", i < 0);
+                } else {
+                    star.classList.toggle("selected", i < rating);
+                }
             });
+            
+            selectedRating = rating;
         }
 
-        function applyFilter() {
+        function applyFilter(isShowMore) {
             const locationId = document.getElementById("cityInput").cityId;
             const radius = document.getElementById("radius").value;
             const sort = document.getElementById("sort").value;
@@ -537,7 +553,7 @@
                 cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
-                pageNumber: 1,
+                pageNumber: selectedPage,
                 pageSize: 21
             };
 
@@ -570,18 +586,30 @@
             })
             .then(data => {
                 console.log("Filtered Data:", data);
-
+                
                 showCuisineList(data.cuisine);
 
                 if (data.restaurants.length > 0) {
-                    showRestaurantListCard(data.restaurants)
+                    showRestaurantListCard(data.restaurants, isShowMore)
+                    restaurantsResult.style.display = "block";
                 } else {
                     showToast("No results found!");
+                }
+
+                if(!data.hasNextPage) {
+                    document.getElementById("loadMore").style.display = "none";
+                } else {
+                    document.getElementById("loadMore").style.display = "flex";
                 }
             })
             .catch(error => {
                 console.error("Fetch error:", error);
             });
+        }
+
+        const loadMore = () => {
+            selectedPage++;
+            applyFilter(true);
         }
 
         function clearFilter() {
@@ -672,12 +700,15 @@
             return '$'.repeat(price);
         };
 
-        const showRestaurantListCard = (data) => {
+        const showRestaurantListCard = (data, isShowMore) => {
             if (data.length === 0) {
                 showToast("No results found")
             }
 
-            container.innerHTML = "";
+            if(!isShowMore) {
+                container.innerHTML = "";
+            }
+
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
                 card.classList = "results__list__item";
@@ -706,7 +737,7 @@
                         </svg>
                         <span>${restaurant.distance}</span>
                     </div>
-                    <a href="${restaurant.retailerUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
+                    <a href="${restaurant.retailerUrl}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">
                         ${restaurant.buttonCaption}
                     </a>
 
@@ -900,7 +931,7 @@
                     </div>
 
                     <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px;">
-                        <a href="${data[index].retailerUrl}" class="results__list__item__button" style="padding: 12px 40px; font-size: 14px">
+                        <a href="${data[index].retailerUrl}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">
                             ${data[index].buttonCaption}
                         </a>                    
                     </div>
