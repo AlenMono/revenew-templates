@@ -324,7 +324,7 @@
                     <option value="ratingHighLow">Rating High/Low</option>
                 </select>
                 <label style="margin-left: 20px;">
-                    <input type="checkbox" id="openNow" checked /> Open Now
+                    <input type="checkbox" id="openNow" /> Open Now
                 </label>
             </div>
         </div>
@@ -565,7 +565,7 @@
             document.getElementById("cityInput").value = "";
             document.getElementById("radius").value = 15;
             document.getElementById("sort").value = "distance";
-            document.getElementById("openNow").checked = true;
+            document.getElementById("openNow").checked = false;
 
             document.querySelectorAll(".cuisine-group button, .price-group button").forEach((btn) => {
                 btn.classList.remove("selected");
