@@ -19,7 +19,35 @@
             box-sizing: border-box;
         }
 
+        .loader__wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #c1c1c1d5;
+            z-index: 9999
+        }
+
+        .loader {         
+            width: 50px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 8px solid;
+            border-color: #e74c3c #0000;
+            animation: l1 1s infinite;
+        }
+
+        @keyframes l1 {to{transform: rotate(.5turn)}}
+
         .card--primary {
+            position: relative;
+            
             display: flex;
             flex-direction: column;
             
@@ -39,6 +67,7 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
+            color: #000
         }
 
         .btn--apply svg {
@@ -72,8 +101,8 @@
         }
 
         .filter__footer {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             margin-top: 12px;
         }
 
@@ -405,21 +434,29 @@
 
         <div class="filter__footer">
             <div></div>
-            <button onclick="applyFilter()" class="btn--apply">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                    <path fill="" fill-rule="evenodd"
-                        d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
-                        clip-rule="evenodd" />
-                </svg>
-                Apply Filter
-            </button>
-            <button onclick="clearFilter()" class="btn--clear">
-                Clear Filter
-            </button>
+            <div style="display: flex; justify-content: center;">
+                <button onclick="applyFilter()" class="btn--apply">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                        <path fill="" fill-rule="evenodd"
+                            d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Apply Filter
+                </button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+                <button onclick="clearFilter()" class="btn--clear">
+                    Clear Filter
+                </button>
+            </div>
         </div>
     </div>
 
     <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
+
+    <div class="loader__wrapper">
+        <div class="loader"></div>
+    </div>
 
     <div class="card--primary" id="restaurantsResult" style="display: none;">
         <!-- Cards will be inserted here by JS -->
@@ -458,6 +495,16 @@
                 clearTimeout(debounceTimeout);
                 debounceTimeout = setTimeout(() => func.apply(this, args), delay);
             };
+        }
+
+        const showLoading = (isLoading) => {
+            const loaderWrapper = document.querySelector(".loader__wrapper");
+            
+            if(isLoading) {
+                loaderWrapper.style.display = "flex";
+            } else {
+                loaderWrapper.style.display = "none";
+            }
         }
 
         const fetchCities = async (query) => {
@@ -596,6 +643,7 @@
         }
 
         function applyFilter(isShowMore) {
+            showLoading(true);
             const locationId = document.getElementById("cityInput").cityId;
             const radius = document.getElementById("radius").value;
             const sort = document.getElementById("sort").value;
@@ -635,6 +683,8 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
+                showLoading(false);
+
                 return response.text().then(text => {
                     if (!text) {
                         console.warn("Empty response body");
@@ -671,9 +721,12 @@
                 }
 
                 document.getElementById("loadMore").style.display = data.hasNextPage ? "flex" : "none";
+
+                showLoading(false);
             })
             .catch(error => {
                 console.error("Fetch error:", error);
+                showLoading(false);
             });
         }
 
@@ -1049,7 +1102,7 @@
 
         // GET LOCATION 
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, handleError);
+            navigator.geolocation.getCurrentPosition(showPosition);
         } else {
             alert("Geolocation is not supported by this browser.");
         }
