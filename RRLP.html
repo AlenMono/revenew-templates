@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1280, initial-scale=1.0">
+    <meta name="viewport" content="width=1080, initial-scale=1.0">
     <title>Filter UI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            width: 1280px;
+            width: 1080px;
             margin: 0 auto;
         }
 
@@ -120,13 +120,22 @@
             background-color: #ffe;
         }
 
-        .stars span {
+        .stars { 
+            display: flex;
+            gap: 4px;
+
             font-size: 24px;
             cursor: pointer;
         }
 
-        .stars .selected {
-            color: gold;
+        .star-icon {
+            cursor: pointer;
+            transition: fill 0.2s;
+        }
+
+        .star-icon.selected {
+            fill: gold;
+            stroke: #000
         }
 
         .card-opened {
@@ -187,6 +196,18 @@
 
         .results__list__item:hover {
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .results__list__item__header {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+            gap: 8px;
+
+            margin-bottom: 6px;
         }
 
         .results__rating {
@@ -314,21 +335,31 @@
 
 <body>
     <div class="filter-section">
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <div class="filter-group" style="position: relative;">
-                <span>📍</span>
-                <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code"
+        <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px;">
+            <div style="position: relative;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div style="display: flex; align-items: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#000000" id="Location--Streamline-Tabler-Filled" height="20" width="20">
+                            <desc>
+                                Location Streamline Icon: https://streamlinehq.com
+                            </desc>
+                            <path d="M17.409166666666668 1.6716666666666666 17.497500000000002 1.6666666666666667l0.10833333333333334 0.006666666666666667 0.075 0.013333333333333334 0.10250000000000001 0.02916666666666667 0.08916666666666667 0.03833333333333334 0.08333333333333334 0.0475 0.075 0.05583333333333334 0.06833333333333334 0.0625 0.043333333333333335 0.049166666666666664 0.06833333333333334 0.09666666666666668 0.043333333333333335 0.08c0.03916666666666667 0.08333333333333334 0.06416666666666666 0.17166666666666666 0.075 0.26333333333333336l0.004166666666666667 0.08833333333333333c0 0.0625 -0.006666666666666667 0.12416666666666666 -0.02 0.18333333333333335l-0.02916666666666667 0.10250000000000001 -5.443333333333333 15.064166666666669A1.2916666666666667 1.2916666666666667 0 0 1 11.666666666666668 18.6a1.2891666666666666 1.2891666666666666 0 0 1 -1.1075 -0.6225l-0.05416666666666667 -0.10583333333333333 -2.7933333333333334 -5.585 -5.558333333333334 -2.78a1.2916666666666667 1.2916666666666667 0 0 1 -0.7483333333333334 -1.0491666666666666L1.4 8.333333333333334c0 -0.46666666666666673 0.25083333333333335 -0.8933333333333334 0.7008333333333333 -1.1416666666666668l0.11666666666666668 -0.05833333333333334 15.014166666666666 -5.421666666666667 0.08833333333333333 -0.025 0.09 -0.015z" stroke-width="0.8333"></path>
+                        </svg>
+                    </div>
+                    <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code"
                     autocomplete="off" />
+
+                </div>
                 <ul id="suggestions"></ul>
             </div>
 
-            <div class="filter-group">
+            <div>
                 <label for="radius">Radius</label>
                 <input type="number" id="radius" value="15"
-                    style="width: 50px; padding: 6px 8px; border-radius: 6px;" /> miles
+                    style="width: 76px; padding: 6px 8px; border-radius: 6px;" /> miles
             </div>
 
-            <div class="filter-group">
+            <div>
                 <label for="sort">Sort by:</label>
                 <select id="sort" style="padding: 6px 8px; border-radius: 6px;">
                     <option value="distance">Closest Distance</option>
@@ -336,12 +367,18 @@
                     <option value="priceLowHigh">Price Low/High</option>
                     <option value="ratingHighLow">Rating High/Low</option>
                 </select>
-                <label style="margin-left: 20px;">
-                    <input type="checkbox" id="openNow" /> Open Now
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label>
+                    <input type="checkbox" id="openNow" /> 
                 </label>
+                <p style="font-size: 14x; font-weight: bold;">
+                    Open Now
+                </p>
             </div>
         </div>
-
+        
         <div class="filter-group cuisine-group" style="display: flex; align-items: flex-start; gap: 30px">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <label>Cuisine</label>
@@ -362,13 +399,7 @@
 
             <div class="filter-group" style="display: flex; align-items: center; gap: 8px">
                 <label>Minimum Rating</label>
-                <div class="stars" id="starRating">
-                    <span onclick="setRating(1)">★</span>
-                    <span onclick="setRating(2)">★</span>
-                    <span onclick="setRating(3)">★</span>
-                    <span onclick="setRating(4)">★</span>
-                    <span onclick="setRating(5)">★</span>
-                </div>
+                <div class="stars" id="starRating"></div>
             </div>
         </div>
 
@@ -403,6 +434,7 @@
         const input = document.getElementById("cityInput");
         const suggestions = document.getElementById("suggestions");
         const container = document.getElementById("cardsContainer");
+        const starContainer = document.getElementById('starRating');
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
@@ -412,6 +444,14 @@
         let selectedPage = 1;
         let openIndex = null;
         let lat, lon, hasNextPage, debounceTimeout;
+
+        const filledStar = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"><path fill="#ffd709" d="M9.636 16.106a.828.828 0 0 1 .728 0l4.428 2.34a.77.77 0 0 0 1.12-.813l-.854-5.002a.744.744 0 0 1 .224-.672l3.587-3.461a.757.757 0 0 0-.462-1.303l-4.918-.729a.714.714 0 0 1-.575-.42l-2.227-4.498a.757.757 0 0 0-1.374 0L7.086 6.046a.714.714 0 0 1-.575.42l-4.918.729a.756.756 0 0 0-.462 1.303l3.587 3.46a.742.742 0 0 1 .224.673l-.855 5.002a.77.77 0 0 0 1.121.813l4.428-2.34Z"/><path fill="#000" fill-rule="evenodd" d="M8.508 1.164C8.778.59 9.368.217 10 .217c.633 0 1.222.374 1.492.946l2.194 4.43 4.824.715c.63.062 1.18.492 1.393 1.09a1.663 1.663 0 0 1-.414 1.743l-3.538 3.413.841 4.926a1.676 1.676 0 0 1-.662 1.632 1.677 1.677 0 0 1-1.739.132l-.016-.009L10 16.923l-4.375 2.312a1.677 1.677 0 0 1-1.755-.123 1.676 1.676 0 0 1-.662-1.632l.841-4.926L.511 9.141a1.663 1.663 0 0 1-.414-1.743 1.663 1.663 0 0 1 1.393-1.09l4.824-.715 2.194-4.43Zm3.6 5.266c.231.5.712.852 1.258.92l4.687.695-3.38 3.261-.001.001a1.646 1.646 0 0 0-.494 1.475l.813 4.76-4.21-2.225a1.73 1.73 0 0 0-1.54-.012h.001a.841.841 0 0 0-.023.012l-4.21 2.224.813-4.76.001-.005a1.646 1.646 0 0 0-.494-1.468L1.948 8.045l4.687-.694a1.619 1.619 0 0 0 1.256-.92L10 2.174l2.108 4.256Z" clip-rule="evenodd"/></svg>
+        `;
+
+        const outlineStar = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"><path fill="" d="M9.636 16.106a.828.828 0 0 1 .728 0l4.428 2.34a.77.77 0 0 0 1.12-.813l-.854-5.002a.744.744 0 0 1 .224-.672l3.587-3.461a.757.757 0 0 0-.462-1.303l-4.918-.729a.714.714 0 0 1-.575-.42l-2.227-4.498a.757.757 0 0 0-1.374 0L7.086 6.046a.714.714 0 0 1-.575.42l-4.918.729a.756.756 0 0 0-.462 1.303l3.587 3.46a.742.742 0 0 1 .224.673l-.855 5.002a.77.77 0 0 0 1.121.813l4.428-2.34Z"/><path fill="#000" fill-rule="evenodd" d="M8.508 1.164C8.778.59 9.368.217 10 .217c.633 0 1.222.374 1.492.946l2.194 4.43 4.824.715c.63.062 1.18.492 1.393 1.09a1.663 1.663 0 0 1-.414 1.743l-3.538 3.413.841 4.926a1.676 1.676 0 0 1-.662 1.632 1.677 1.677 0 0 1-1.739.132l-.016-.009L10 16.923l-4.375 2.312a1.677 1.677 0 0 1-1.755-.123 1.676 1.676 0 0 1-.662-1.632l.841-4.926L.511 9.141a1.663 1.663 0 0 1-.414-1.743 1.663 1.663 0 0 1 1.393-1.09l4.824-.715 2.194-4.43Zm3.6 5.266c.231.5.712.852 1.258.92l4.687.695-3.38 3.261-.001.001a1.646 1.646 0 0 0-.494 1.475l.813 4.76-4.21-2.225a1.73 1.73 0 0 0-1.54-.012h.001a.841.841 0 0 0-.023.012l-4.21 2.224.813-4.76.001-.005a1.646 1.646 0 0 0-.494-1.468L1.948 8.045l4.687-.694a1.619 1.619 0 0 0 1.256-.92L10 2.174l2.108 4.256Z" clip-rule="evenodd"/></svg>
+        `;
 
         const debounce = (func, delay) => {
             return function (...args) {
@@ -532,21 +572,27 @@
             }
         };
 
-        const setRating = (rating) => {
-            
-            document.querySelectorAll("#starRating span").forEach((star, i) => {
-                if(selectedRating === rating) {
-                    star.classList.toggle("selected", i < 0);
-                } else {
-                    star.classList.toggle("selected", i < rating);
-                }
-            });
+        const renderStars = (rating) => {
+            return Array.from({ length: 5 }, (_, i) =>
+                `<span class="star-wrapper" data-index="${i + 1}" style="cursor: pointer; display: inline-block;">${i + 1 <= rating ? filledStar : outlineStar}</span>`
+            ).join('');
+        };
 
-            if(selectedRating === rating) {
-                selectedRating = 0;
-            } else {
-                selectedRating = rating;
-            }
+        const updateStars = (rating) => {
+            starContainer.innerHTML = renderStars(rating);
+
+            starContainer.querySelectorAll('.star-wrapper').forEach((el) => {
+                el.addEventListener('click', () => {
+                const index = parseInt(el.dataset.index);
+                selectedRating = (selectedRating === index) ? 0 : index;
+                updateStars(selectedRating);
+                });
+            });
+        };
+
+        function setRating(rating) {
+            selectedRating = selectedRating === rating ? 0 : rating;
+            renderStars();
         }
 
         function applyFilter(isShowMore) {
@@ -652,8 +698,6 @@
             resetLocation();
         }
 
-        setRating(selectedRating);
-
         const showCuisineList = (dataArray) => {
             const cuisineList = document.getElementById("cuisineList");
             cuisineList.innerHTML = "";
@@ -706,16 +750,6 @@
             }
         }
 
-        const renderStars = (rating) => {
-            const stars = [];
-
-            for (let i = 1; i <= 5; i++) {
-                stars.push(`<span class="${i <= rating ? 'selected' : ''}" style="line-height: 1;">★</span>`);
-            }
-
-            return stars.join('');
-        }
-
         const renderPrice = (price) => {
             if (price === null) {
                 return '$'
@@ -731,7 +765,13 @@
                 card.classList = "results__list__item";
 
                 card.innerHTML = `
-                    <strong>${restaurant.offerIncentiveCaption}</strong>
+                    <div class="results__list__item__header">
+                        <div></div>
+                        <strong>${restaurant.offerIncentiveCaption}</strong>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-0.625 -0.625 20 20"><path fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.25" d="M1.172 9.375a8.203 8.203 0 1 0 16.406 0 8.203 8.203 0 1 0-16.406 0M4.898 9.375h8.954M9.375 4.898v8.954"/></svg>    
+                        </div>
+                    </div>
                     <img src="${restaurant.retailerLogoUrl}"
                         alt="" height="100">
                     <strong>${restaurant.retailer}</strong>
@@ -1014,6 +1054,9 @@
             alert("Geolocation is not supported by this browser.");
         }
 
+        // Initial render
+        updateStars(selectedRating);
+        setRating(selectedRating);
         applyFilter();
     </script>
 </body>
