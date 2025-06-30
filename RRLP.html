@@ -34,7 +34,31 @@
             z-index: 9999
         }
 
-        .loader {         
+        .card--success {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 12px 24px;
+
+            background-color: #008555;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .loader {
             width: 50px;
             aspect-ratio: 1;
             border-radius: 50%;
@@ -43,14 +67,18 @@
             animation: l1 1s infinite;
         }
 
-        @keyframes l1 {to{transform: rotate(.5turn)}}
+        @keyframes l1 {
+            to {
+                transform: rotate(.5turn)
+            }
+        }
 
         .card--primary {
             position: relative;
-            
+
             display: flex;
             flex-direction: column;
-            
+
             max-width: 1080px;
             margin: 0 auto;
 
@@ -85,8 +113,6 @@
         }
 
         .btn--clear {
-            margin-left: 12px;
-            padding: 12px 20px;
             border: none;
             cursor: pointer;
 
@@ -96,8 +122,7 @@
         }
 
         .btn--clear:hover {
-            background-color: #000000;
-            color: white;
+            color: #000;
         }
 
         .filter__footer {
@@ -112,6 +137,7 @@
         }
 
         .zip-code-input {
+            min-width: 200px;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -149,9 +175,9 @@
             background-color: #ffe;
         }
 
-        .stars { 
+        .stars {
             display: flex;
-            gap: 4px;
+            gap: 12px;
 
             font-size: 24px;
             cursor: pointer;
@@ -233,7 +259,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            
+
             gap: 8px;
 
             margin-bottom: 6px;
@@ -295,6 +321,7 @@
         }
 
         .detail-card__info {
+            justify-content: space-between;
             align-items: flex-start;
         }
 
@@ -322,7 +349,8 @@
         .slide {
             min-width: 100%;
             height: 100%;
-            background-size: cover;
+            background-size: contain;
+            background-repeat: no-repeat;
             background-position: center;
             display: none;
             transition: opacity 0.5s ease-in-out;
@@ -364,19 +392,23 @@
 
 <body>
     <div class="filter-section">
-        <div style="display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px;">
+        <div
+            style="display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px;">
             <div style="position: relative;">
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div style="display: flex; align-items: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#000000" id="Location--Streamline-Tabler-Filled" height="20" width="20">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#000000"
+                            id="Location--Streamline-Tabler-Filled" height="20" width="20">
                             <desc>
                                 Location Streamline Icon: https://streamlinehq.com
                             </desc>
-                            <path d="M17.409166666666668 1.6716666666666666 17.497500000000002 1.6666666666666667l0.10833333333333334 0.006666666666666667 0.075 0.013333333333333334 0.10250000000000001 0.02916666666666667 0.08916666666666667 0.03833333333333334 0.08333333333333334 0.0475 0.075 0.05583333333333334 0.06833333333333334 0.0625 0.043333333333333335 0.049166666666666664 0.06833333333333334 0.09666666666666668 0.043333333333333335 0.08c0.03916666666666667 0.08333333333333334 0.06416666666666666 0.17166666666666666 0.075 0.26333333333333336l0.004166666666666667 0.08833333333333333c0 0.0625 -0.006666666666666667 0.12416666666666666 -0.02 0.18333333333333335l-0.02916666666666667 0.10250000000000001 -5.443333333333333 15.064166666666669A1.2916666666666667 1.2916666666666667 0 0 1 11.666666666666668 18.6a1.2891666666666666 1.2891666666666666 0 0 1 -1.1075 -0.6225l-0.05416666666666667 -0.10583333333333333 -2.7933333333333334 -5.585 -5.558333333333334 -2.78a1.2916666666666667 1.2916666666666667 0 0 1 -0.7483333333333334 -1.0491666666666666L1.4 8.333333333333334c0 -0.46666666666666673 0.25083333333333335 -0.8933333333333334 0.7008333333333333 -1.1416666666666668l0.11666666666666668 -0.05833333333333334 15.014166666666666 -5.421666666666667 0.08833333333333333 -0.025 0.09 -0.015z" stroke-width="0.8333"></path>
+                            <path
+                                d="M17.409166666666668 1.6716666666666666 17.497500000000002 1.6666666666666667l0.10833333333333334 0.006666666666666667 0.075 0.013333333333333334 0.10250000000000001 0.02916666666666667 0.08916666666666667 0.03833333333333334 0.08333333333333334 0.0475 0.075 0.05583333333333334 0.06833333333333334 0.0625 0.043333333333333335 0.049166666666666664 0.06833333333333334 0.09666666666666668 0.043333333333333335 0.08c0.03916666666666667 0.08333333333333334 0.06416666666666666 0.17166666666666666 0.075 0.26333333333333336l0.004166666666666667 0.08833333333333333c0 0.0625 -0.006666666666666667 0.12416666666666666 -0.02 0.18333333333333335l-0.02916666666666667 0.10250000000000001 -5.443333333333333 15.064166666666669A1.2916666666666667 1.2916666666666667 0 0 1 11.666666666666668 18.6a1.2891666666666666 1.2891666666666666 0 0 1 -1.1075 -0.6225l-0.05416666666666667 -0.10583333333333333 -2.7933333333333334 -5.585 -5.558333333333334 -2.78a1.2916666666666667 1.2916666666666667 0 0 1 -0.7483333333333334 -1.0491666666666666L1.4 8.333333333333334c0 -0.46666666666666673 0.25083333333333335 -0.8933333333333334 0.7008333333333333 -1.1416666666666668l0.11666666666666668 -0.05833333333333334 15.014166666666666 -5.421666666666667 0.08833333333333333 -0.025 0.09 -0.015z"
+                                stroke-width="0.8333"></path>
                         </svg>
                     </div>
                     <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code"
-                    autocomplete="off" />
+                        autocomplete="off" />
 
                 </div>
                 <ul id="suggestions"></ul>
@@ -385,7 +417,7 @@
             <div>
                 <label for="radius">Radius</label>
                 <input type="number" id="radius" value="15"
-                    style="width: 76px; padding: 6px 8px; border-radius: 6px;" /> miles
+                    style="width: 44px; padding: 6px 8px; border-radius: 6px;" /> miles
             </div>
 
             <div>
@@ -400,54 +432,54 @@
 
             <div style="display: flex; align-items: center; gap: 8px;">
                 <label>
-                    <input type="checkbox" id="openNow" /> 
+                    <input type="checkbox" id="openNow" />
                 </label>
                 <p style="font-size: 14x; font-weight: bold;">
                     Open Now
                 </p>
             </div>
         </div>
-        
+
         <div class="filter-group cuisine-group" style="display: flex; align-items: flex-start; gap: 30px">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <label>Cuisine</label>
-                <button onclick="selectCuisine(this)" style="padding-left: 30px; padding-right: 30px; white-space: nowrap;">Select All</button>
+                <button onclick="selectCuisine(this)"
+                    style="padding-left: 30px; padding-right: 30px; white-space: nowrap;">Select All</button>
             </div>
-            
+
             <div id="cuisineList"></div>
         </div>
 
-        <div style="display: flex; gap: 12px;">
-            <div class="filter-group price-group">
-                <label>Price</label>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="price-group">
+                <label style="font-weight: bold;">Price</label>
                 <button onclick="selectPrice(this)">$</button>
                 <button onclick="selectPrice(this)">$$</button>
                 <button onclick="selectPrice(this)">$$$</button>
                 <button onclick="selectPrice(this)">$$$$</button>
             </div>
 
-            <div class="filter-group" style="display: flex; align-items: center; gap: 8px">
-                <label>Minimum Rating</label>
+            <div class="" style="display: flex; align-items: center; gap: 8px">
+                <label style="font-weight: bold;">Minimum Rating</label>
                 <div class="stars" id="starRating"></div>
             </div>
-        </div>
 
-        <div class="filter__footer">
-            <div></div>
-            <div style="display: flex; justify-content: center;">
-                <button onclick="applyFilter()" class="btn--apply">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                        <path fill="" fill-rule="evenodd"
-                            d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    Apply Filter
-                </button>
-            </div>
-            <div style="display: flex; justify-content: flex-end;">
-                <button onclick="clearFilter()" class="btn--clear">
-                    Clear Filter
-                </button>
+            <div style="display: flex; align-items: center; justify-content: flex-end; flex: 1; gap: 12px;">
+                <div style="display: flex; justify-content: center;">
+                    <button onclick="applyFilter()" class="btn--apply">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                            <path fill="" fill-rule="evenodd"
+                                d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Apply Filter
+                    </button>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button onclick="clearFilter()" class="btn--clear">
+                        Clear Filter
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -456,6 +488,10 @@
 
     <div class="loader__wrapper">
         <div class="loader"></div>
+    </div>
+
+    <div class="card--success" id="successCard" style="display: none;">
+        <p>Congratulations! You can now access over 20,000+ restaurant offers.</p>
     </div>
 
     <div class="card--primary" id="restaurantsResult" style="display: none;">
@@ -472,6 +508,7 @@
         const suggestions = document.getElementById("suggestions");
         const container = document.getElementById("cardsContainer");
         const starContainer = document.getElementById('starRating');
+        const successCard = document.getElementById('successCard');
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
@@ -482,12 +519,16 @@
         let openIndex = null;
         let lat, lon, hasNextPage, debounceTimeout;
 
+        const filledStarSml = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"><path fill="#ffd709" d="M7.709 12.885a.662.662 0 0 1 .582 0l3.542 1.872a.616.616 0 0 0 .897-.65l-.684-4.002a.595.595 0 0 1 .18-.538l2.87-2.769a.605.605 0 0 0-.37-1.042l-3.935-.583a.572.572 0 0 1-.46-.336L8.55 1.239a.605.605 0 0 0-1.098 0L5.669 4.837a.572.572 0 0 1-.46.336l-3.934.583a.605.605 0 0 0-.37 1.042l2.87 2.769a.594.594 0 0 1 .179.538l-.684 4.002a.617.617 0 0 0 .897.65l3.542-1.872Z"/><path fill="#000" fill-rule="evenodd" d="M6.806.93A1.33 1.33 0 0 1 8 .175c.506 0 .978.299 1.193.756l1.756 3.544 3.86.572c.503.05.944.394 1.113.872a1.33 1.33 0 0 1-.33 1.394l-2.831 2.732.673 3.94a1.34 1.34 0 0 1-.53 1.306 1.341 1.341 0 0 1-1.391.105l-.013-.007-3.5-1.85-3.5 1.85a1.342 1.342 0 0 1-1.404-.099 1.341 1.341 0 0 1-.53-1.305l.673-3.94L.41 7.312a1.33 1.33 0 0 1-.33-1.394 1.33 1.33 0 0 1 1.113-.872l3.859-.572L6.806.931Zm2.88 4.214c.185.4.57.681 1.007.737l3.75.555-2.705 2.609c-.32.3-.47.748-.396 1.18l.651 3.808-3.368-1.78a1.383 1.383 0 0 0-1.231-.01.673.673 0 0 0-.02.01l-3.367 1.78.65-3.808.001-.004a1.317 1.317 0 0 0-.395-1.175l-2.705-2.61 3.75-.555c.436-.056.82-.337 1.005-.736L8 1.739l1.687 3.405Z" clip-rule="evenodd"/></svg>
+        `
+
         const filledStar = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"><path fill="#ffd709" d="M9.636 16.106a.828.828 0 0 1 .728 0l4.428 2.34a.77.77 0 0 0 1.12-.813l-.854-5.002a.744.744 0 0 1 .224-.672l3.587-3.461a.757.757 0 0 0-.462-1.303l-4.918-.729a.714.714 0 0 1-.575-.42l-2.227-4.498a.757.757 0 0 0-1.374 0L7.086 6.046a.714.714 0 0 1-.575.42l-4.918.729a.756.756 0 0 0-.462 1.303l3.587 3.46a.742.742 0 0 1 .224.673l-.855 5.002a.77.77 0 0 0 1.121.813l4.428-2.34Z"/><path fill="#000" fill-rule="evenodd" d="M8.508 1.164C8.778.59 9.368.217 10 .217c.633 0 1.222.374 1.492.946l2.194 4.43 4.824.715c.63.062 1.18.492 1.393 1.09a1.663 1.663 0 0 1-.414 1.743l-3.538 3.413.841 4.926a1.676 1.676 0 0 1-.662 1.632 1.677 1.677 0 0 1-1.739.132l-.016-.009L10 16.923l-4.375 2.312a1.677 1.677 0 0 1-1.755-.123 1.676 1.676 0 0 1-.662-1.632l.841-4.926L.511 9.141a1.663 1.663 0 0 1-.414-1.743 1.663 1.663 0 0 1 1.393-1.09l4.824-.715 2.194-4.43Zm3.6 5.266c.231.5.712.852 1.258.92l4.687.695-3.38 3.261-.001.001a1.646 1.646 0 0 0-.494 1.475l.813 4.76-4.21-2.225a1.73 1.73 0 0 0-1.54-.012h.001a.841.841 0 0 0-.023.012l-4.21 2.224.813-4.76.001-.005a1.646 1.646 0 0 0-.494-1.468L1.948 8.045l4.687-.694a1.619 1.619 0 0 0 1.256-.92L10 2.174l2.108 4.256Z" clip-rule="evenodd"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"><path fill="#ffd709" d="M12.526 20.938a1.076 1.076 0 0 1 .948 0l5.755 3.041a1.001 1.001 0 0 0 1.458-1.056l-1.112-6.502a.967.967 0 0 1 .292-.875l4.663-4.499a.984.984 0 0 0-.601-1.694l-6.394-.947a.929.929 0 0 1-.746-.546l-2.896-5.847a.984.984 0 0 0-1.786 0L9.211 7.86a.929.929 0 0 1-.746.546l-6.394.947a.983.983 0 0 0-.6 1.694l4.662 4.5a.965.965 0 0 1 .292.874l-1.112 6.502a1.002 1.002 0 0 0 1.458 1.056l5.755-3.041Z"/><path fill="#000" fill-rule="evenodd" d="M11.06 1.513A2.162 2.162 0 0 1 13 .282c.822 0 1.589.486 1.94 1.23l2.852 5.759 6.272.93c.817.08 1.534.64 1.81 1.416a2.162 2.162 0 0 1-.538 2.266l-4.6 4.438 1.094 6.403a2.179 2.179 0 0 1-.861 2.122 2.18 2.18 0 0 1-2.26.171l-.022-.011L13 22l-5.687 3.006a2.18 2.18 0 0 1-2.282-.16 2.18 2.18 0 0 1-.861-2.122l1.094-6.403-4.6-4.438a2.162 2.162 0 0 1-.538-2.266A2.163 2.163 0 0 1 1.937 8.2l6.272-.929 2.852-5.758Zm4.68 6.847c.301.648.926 1.106 1.635 1.196l6.093.903-4.393 4.24h-.002a2.14 2.14 0 0 0-.642 1.916v.001l1.058 6.188-5.473-2.892a2.248 2.248 0 0 0-2.001-.016l-.03.016-5.473 2.892 1.057-6.188.001-.007a2.14 2.14 0 0 0-.642-1.909L2.532 10.46l6.093-.903a2.105 2.105 0 0 0 1.634-1.196L13 2.826l2.74 5.534Z" clip-rule="evenodd"/></svg>
         `;
 
         const outlineStar = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"><path fill="" d="M9.636 16.106a.828.828 0 0 1 .728 0l4.428 2.34a.77.77 0 0 0 1.12-.813l-.854-5.002a.744.744 0 0 1 .224-.672l3.587-3.461a.757.757 0 0 0-.462-1.303l-4.918-.729a.714.714 0 0 1-.575-.42l-2.227-4.498a.757.757 0 0 0-1.374 0L7.086 6.046a.714.714 0 0 1-.575.42l-4.918.729a.756.756 0 0 0-.462 1.303l3.587 3.46a.742.742 0 0 1 .224.673l-.855 5.002a.77.77 0 0 0 1.121.813l4.428-2.34Z"/><path fill="#000" fill-rule="evenodd" d="M8.508 1.164C8.778.59 9.368.217 10 .217c.633 0 1.222.374 1.492.946l2.194 4.43 4.824.715c.63.062 1.18.492 1.393 1.09a1.663 1.663 0 0 1-.414 1.743l-3.538 3.413.841 4.926a1.676 1.676 0 0 1-.662 1.632 1.677 1.677 0 0 1-1.739.132l-.016-.009L10 16.923l-4.375 2.312a1.677 1.677 0 0 1-1.755-.123 1.676 1.676 0 0 1-.662-1.632l.841-4.926L.511 9.141a1.663 1.663 0 0 1-.414-1.743 1.663 1.663 0 0 1 1.393-1.09l4.824-.715 2.194-4.43Zm3.6 5.266c.231.5.712.852 1.258.92l4.687.695-3.38 3.261-.001.001a1.646 1.646 0 0 0-.494 1.475l.813 4.76-4.21-2.225a1.73 1.73 0 0 0-1.54-.012h.001a.841.841 0 0 0-.023.012l-4.21 2.224.813-4.76.001-.005a1.646 1.646 0 0 0-.494-1.468L1.948 8.045l4.687-.694a1.619 1.619 0 0 0 1.256-.92L10 2.174l2.108 4.256Z" clip-rule="evenodd"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"><path fill="" d="M12.526 20.938a1.076 1.076 0 0 1 .948 0l5.755 3.041a1.001 1.001 0 0 0 1.458-1.056l-1.112-6.502a.967.967 0 0 1 .292-.875l4.663-4.499a.984.984 0 0 0-.601-1.694l-6.394-.947a.929.929 0 0 1-.746-.546l-2.896-5.847a.984.984 0 0 0-1.786 0L9.211 7.86a.929.929 0 0 1-.746.546l-6.394.947a.983.983 0 0 0-.6 1.694l4.662 4.5a.965.965 0 0 1 .292.874l-1.112 6.502a1.002 1.002 0 0 0 1.458 1.056l5.755-3.041Z"/><path fill="#000" fill-rule="evenodd" d="M11.06 1.513A2.162 2.162 0 0 1 13 .282c.822 0 1.589.486 1.94 1.23l2.852 5.759 6.272.93c.817.08 1.534.64 1.81 1.416a2.162 2.162 0 0 1-.538 2.266l-4.6 4.438 1.094 6.403a2.179 2.179 0 0 1-.861 2.122 2.18 2.18 0 0 1-2.26.171l-.022-.011L13 22l-5.687 3.006a2.18 2.18 0 0 1-2.282-.16 2.18 2.18 0 0 1-.861-2.122l1.094-6.403-4.6-4.438a2.162 2.162 0 0 1-.538-2.266A2.163 2.163 0 0 1 1.937 8.2l6.272-.929 2.852-5.758Zm4.68 6.847c.301.648.926 1.106 1.635 1.196l6.093.903-4.393 4.24h-.002a2.14 2.14 0 0 0-.642 1.916v.001l1.058 6.188-5.473-2.892a2.248 2.248 0 0 0-2.001-.016l-.03.016-5.473 2.892 1.057-6.188.001-.007a2.14 2.14 0 0 0-.642-1.909L2.532 10.46l6.093-.903a2.105 2.105 0 0 0 1.634-1.196L13 2.826l2.74 5.534Z" clip-rule="evenodd"/></svg>
         `;
 
         const debounce = (func, delay) => {
@@ -499,8 +540,8 @@
 
         const showLoading = (isLoading) => {
             const loaderWrapper = document.querySelector(".loader__wrapper");
-            
-            if(isLoading) {
+
+            if (isLoading) {
                 loaderWrapper.style.display = "flex";
             } else {
                 loaderWrapper.style.display = "none";
@@ -630,9 +671,9 @@
 
             starContainer.querySelectorAll('.star-wrapper').forEach((el) => {
                 el.addEventListener('click', () => {
-                const index = parseInt(el.dataset.index);
-                selectedRating = (selectedRating === index) ? 0 : index;
-                updateStars(selectedRating);
+                    const index = parseInt(el.dataset.index);
+                    selectedRating = (selectedRating === index) ? 0 : index;
+                    updateStars(selectedRating);
                 });
             });
         };
@@ -664,11 +705,15 @@
                 pageSize: 21
             };
 
+            fetchRestaurants(filters, isShowMore);
+        }
+
+        const fetchRestaurants = async (filters, isShowMore) => {
             //const api = 'http://localhost:60839/api';
             const id = ' Sn8FMPcMnUG39jdxk0ezyw'
 
             // fetch(`{api}Restaurant/search/{bankCustomerOfferGroupId}`, {
-            fetch(`https://api-staging.revenewllc.com/api/Restaurant/search/Iy8RO_OJdEWDIAnKF67Jcw`, {
+            await fetch(`https://api-staging.revenewllc.com/api/Restaurant/search/Iy8RO_OJdEWDIAnKF67Jcw`, {
                 method: "POST",
                 body: JSON.stringify({ ...filters }),
                 credentials: 'include',
@@ -678,56 +723,56 @@
                     // "Authorization": "Basic {apiKey}"
                 }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                showLoading(false);
-
-                return response.text().then(text => {
-                    if (!text) {
-                        console.warn("Empty response body");
-                        return {};
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return JSON.parse(text);
-                });
-            })
-            .then(data => {
-                console.log("Filtered Data:", data);
 
-                showCuisineList(data.cuisine);
+                    showLoading(false);
 
-                if (data.restaurants.length > 0) {
-                    const combined = [...restaurants, ...data.restaurants];
-
-                    const seen = new Set();
-                    restaurants = combined.filter(r => {
-                        const key = `${r.name}-${r.address}`;
-                        if (seen.has(key)) return false;
-                        seen.add(key);
-                        return true;
+                    return response.text().then(text => {
+                        if (!text) {
+                            console.warn("Empty response body");
+                            return {};
+                        }
+                        return JSON.parse(text);
                     });
+                })
+                .then(data => {
+                    console.log("Filtered Data:", data);
 
-                    if(isShowMore) {
-                    showRestaurantListCard(restaurants);
+                    showCuisineList(data.cuisine);
+
+                    if (data.restaurants.length > 0) {
+                        const combined = [...restaurants, ...data.restaurants];
+
+                        const seen = new Set();
+                        restaurants = combined.filter(r => {
+                            const key = `${r.name}-${r.address}`;
+                            if (seen.has(key)) return false;
+                            seen.add(key);
+                            return true;
+                        });
+
+                        if (isShowMore) {
+                            showRestaurantListCard(restaurants);
+                        } else {
+                            showRestaurantListCard(data.restaurants);
+                        }
+
+                        restaurantsResult.style.display = "block";
                     } else {
-                        showRestaurantListCard(data.restaurants);
+                        showToast("No results found!");
                     }
 
-                    restaurantsResult.style.display = "block";
-                } else {
-                    showToast("No results found!");
-                }
+                    document.getElementById("loadMore").style.display = data.hasNextPage ? "flex" : "none";
 
-                document.getElementById("loadMore").style.display = data.hasNextPage ? "flex" : "none";
-
-                showLoading(false);
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
-                showLoading(false);
-            });
+                    showLoading(false);
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    showLoading(false);
+                });
         }
 
         const loadMore = () => {
@@ -830,7 +875,7 @@
                     <strong>${restaurant.retailer}</strong>
                     <div class="results__rating">
                         <div class="stars">
-                            <span class="selected" style="line-height: 1;">★</span>
+                            ${filledStarSml}
                         </div>
                         <p>${restaurant.ratingAverage} (${restaurant.ratingCount})</p>
                         <p>${renderPrice(restaurant.priceRange)}</p>
@@ -847,7 +892,7 @@
                         </svg>
                         <span>${restaurant.distance}</span>
                     </div>
-                    <a href="${restaurant.retailerUrl}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">
+                    <a href="${restaurant.retailerUrl}" target="_blank" class="btn--primary" style="padding: 12px 40px; font-size: 14px">
                         ${restaurant.buttonCaption}
                     </a>
 
@@ -983,7 +1028,7 @@
 
                 const lastCard = cardElements[cardElements.length - 1];
                 lastCard.parentNode.insertBefore(newDetailRow, lastCard.nextSibling);
-                
+
                 detailRow = newDetailRow;
             }
 
@@ -994,16 +1039,43 @@
             const detailCard = document.createElement("div");
             detailCard.className = "detail-card";
 
+            const {
+                retailerUrl,
+                buttonCaption,
+                menuUrl,
+                bookingProviderUrl,
+                retailer,
+                ratingAverage,
+                address,
+                city,
+                phoneNumber,
+                offerIncentiv,
+                offerDetails,
+                priceRange,
+                offerTermsAndConditions,
+                offerIncentiveCaption
+             } = data[index];
+
+            const renderButton = (url, label) => url ? `<a href="${url}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+
+            const buttonsHTML = `
+                <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px; gap: 8px">
+                    ${renderButton(retailerUrl, buttonCaption)}
+                    ${renderButton(menuUrl, 'View Menu')}
+                    ${renderButton(bookingProviderUrl, 'Booking')}
+                </div>
+            `;
+
             detailCard.innerHTML = `
                 <div class="detail-card__media">                    
                     <div id="carousel-container"></div>
 
-                    <h3>${data[index].retailer}</h3>
+                    <h3>${retailer}</h3>
                     <div class="results__rating">
                         <div class="stars">
-                            ${renderStars(data[index].ratingAverage)}
+                            ${renderStars(ratingAverage)}
                         </div>
-                        <p>${data[index].ratingAverage} (1023)</p>
+                        <p>${ratingAverage} (1023)</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 12 12" id="Navigation-Next-Hexagon-2--Streamline-Cyber" height="50" width="50">
@@ -1014,9 +1086,9 @@
                             <path stroke="#555" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="m9.854166666666666 8.25 -4.583333333333333 2.520833333333333 -4.583333333333333 -2.520833333333333V3.208333333333333l4.583333333333333 -2.520833333333333 4.583333333333333 2.520833333333333v5.041666666666666Z" stroke-width="1"></path>
                         </svg>
                         <div>
-                            <p style="color: #555; margin-bottom: 8px;">${data[index].address}</p>
-                            <p style="color: #555; margin-bottom: 8px;">${data[index].city}</p>
-                            <p style="color: #555; font-size: 18px; font-weight: 600">${data[index].phoneNumber}</p>
+                            <p style="color: #555; margin-bottom: 8px;">${address}</p>
+                            <p style="color: #555; margin-bottom: 8px;">${city}</p>
+                            <p style="color: #555; font-size: 20px; font-weight: 600">${phoneNumber}</p>
                         </div>
 
                     </div>
@@ -1027,31 +1099,28 @@
                 </div>
                 
                 <div class="detail-card__info">
-                    <div style="width: 100%;">
-                        <p style="font-size: 18px; text-align: center;"><strong>${data[index].offerIncentiveCaption}</strong></p>
-                    </div>
-                    
-                    ${data[index].offerDetails}
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px;">
+                        <div style="width: 100%;">
+                            <p style="font-size: 22px; text-align: center;"><strong>${offerIncentiveCaption}</strong></p>
+                        </div>
+                        
+                        ${offerDetails}
 
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <p style="font-weight: bold;">Price Range:</p>
-                        <p>
-                            ${renderPrice(data[index].priceRange)}
-                        </p>
-                    </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <p style="font-weight: bold;">Price Range:</p>
+                            <p>
+                                ${renderPrice(priceRange)}
+                            </p>
+                        </div>
 
-                    <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px;">
-                        <a href="${data[index].retailerUrl}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">
-                            ${data[index].buttonCaption}
-                        </a>                    
+                        ${buttonsHTML}
                     </div>
 
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 24px;">
-                        ${data[index].offerTermsAndConditions}
+                        ${offerTermsAndConditions}
                     </div>
                 </div>
             `;
-
 
             detailRow.appendChild(detailCard);
             openIndex = index;
