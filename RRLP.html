@@ -236,9 +236,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
 
-            padding: 12px;
+            padding: 16px 12px;
 
             text-align: center;
 
@@ -334,7 +334,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 300px;
+            width: 316px;
             height: 200px;
             overflow: hidden;
         }
@@ -467,11 +467,6 @@
             <div style="display: flex; align-items: center; justify-content: flex-end; flex: 1; gap: 12px;">
                 <div style="display: flex; justify-content: center;">
                     <button onclick="applyFilter()" class="btn--apply">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
-                            <path fill="" fill-rule="evenodd"
-                                d="M11.167 1.333a1 1 0 1 0 0 2 1 1 0 0 0 0-2ZM0 3h8.93a2.334 2.334 0 0 0 4.473 0H16V1.667h-2.597a2.334 2.334 0 0 0-4.473 0H0V3Zm8.93 11.333H0V13h8.93a2.334 2.334 0 0 1 4.473 0H16v1.333h-2.597a2.334 2.334 0 0 1-4.473 0Zm1.237-.666a1 1 0 1 1 2 0 1 1 0 0 1-2 0ZM16 7.333H7.903a2.334 2.334 0 0 0-4.473 0H0v1.334h3.43a2.334 2.334 0 0 0 4.473 0H16V7.333ZM5.667 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
-                                clip-rule="evenodd" />
-                        </svg>
                         Apply Filter
                     </button>
                 </div>
@@ -484,7 +479,6 @@
         </div>
     </div>
 
-    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>
 
     <div class="loader__wrapper">
         <div class="loader"></div>
@@ -494,6 +488,7 @@
         <p>Congratulations! You can now access over 20,000+ restaurant offers.</p>
     </div>
 
+    <div id="toast-container"></div>
     <div class="card--primary" id="restaurantsResult" style="display: none;">
         <!-- Cards will be inserted here by JS -->
         <div class="results__list" id="cardsContainer"></div>
@@ -526,6 +521,10 @@
         const filledStar = `
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"><path fill="#ffd709" d="M12.526 20.938a1.076 1.076 0 0 1 .948 0l5.755 3.041a1.001 1.001 0 0 0 1.458-1.056l-1.112-6.502a.967.967 0 0 1 .292-.875l4.663-4.499a.984.984 0 0 0-.601-1.694l-6.394-.947a.929.929 0 0 1-.746-.546l-2.896-5.847a.984.984 0 0 0-1.786 0L9.211 7.86a.929.929 0 0 1-.746.546l-6.394.947a.983.983 0 0 0-.6 1.694l4.662 4.5a.965.965 0 0 1 .292.874l-1.112 6.502a1.002 1.002 0 0 0 1.458 1.056l5.755-3.041Z"/><path fill="#000" fill-rule="evenodd" d="M11.06 1.513A2.162 2.162 0 0 1 13 .282c.822 0 1.589.486 1.94 1.23l2.852 5.759 6.272.93c.817.08 1.534.64 1.81 1.416a2.162 2.162 0 0 1-.538 2.266l-4.6 4.438 1.094 6.403a2.179 2.179 0 0 1-.861 2.122 2.18 2.18 0 0 1-2.26.171l-.022-.011L13 22l-5.687 3.006a2.18 2.18 0 0 1-2.282-.16 2.18 2.18 0 0 1-.861-2.122l1.094-6.403-4.6-4.438a2.162 2.162 0 0 1-.538-2.266A2.163 2.163 0 0 1 1.937 8.2l6.272-.929 2.852-5.758Zm4.68 6.847c.301.648.926 1.106 1.635 1.196l6.093.903-4.393 4.24h-.002a2.14 2.14 0 0 0-.642 1.916v.001l1.058 6.188-5.473-2.892a2.248 2.248 0 0 0-2.001-.016l-.03.016-5.473 2.892 1.057-6.188.001-.007a2.14 2.14 0 0 0-.642-1.909L2.532 10.46l6.093-.903a2.105 2.105 0 0 0 1.634-1.196L13 2.826l2.74 5.534Z" clip-rule="evenodd"/></svg>
         `;
+
+        const halfStar = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="-0.5 -0.5 26 26"><path fill="#8fbffa" d="M12.5 1.562V20.77L7.463 23.27c-1.17.58-2.492-.416-2.327-1.75l.72-5.793-3.848-4.252c-.885-.978-.38-2.585.889-2.833l5.497-1.076 2.669-5.113a1.61 1.61 0 0 1 1.437-.89"/><path fill="#fff" fill-rule="evenodd" d="m12.5 20.77 5.037 2.499c1.17.58 2.492-.416 2.327-1.75l-.72-5.793 3.848-4.252c.885-.978.38-2.585-.889-2.833l-5.497-1.076-2.669-5.113a1.61 1.61 0 0 0-1.437-.89z" clip-rule="evenodd"/><path stroke="#2859c5" stroke-linecap="round" stroke-linejoin="round" d="M12.5 1.562V20.77L7.463 23.27c-1.17.58-2.492-.416-2.327-1.75l.72-5.793-3.848-4.252c-.885-.978-.38-2.585.889-2.833l5.497-1.076 2.669-5.113a1.61 1.61 0 0 1 1.437-.89M12.5 1.562c.31 0 .6.1.873.273M12.5 20.77c.195.097.427.231.687.388m1.887-17.097c.123.243.24.492.351.74.158.352.345.679.56.978m2.578 1.9c.327.11.67.19 1.027.24.322.046.644.1.958.164m2.445 1.095c.196.212.335.458.4.744.074.324.034.659-.089.997m-1.667 2.182c-.23.217-.468.43-.707.636a4.955 4.955 0 0 0-.7.741m-.922 2.899c.012.339.06.683.146 1.029.082.328.16.663.227.997m.045 2.962a1.574 1.574 0 0 1-.582.787 1.568 1.568 0 0 1-.713.26m-2.072-.452c-.244-.107-.49-.227-.734-.354a18.09 18.09 0 0 1-.614-.338"/></svg>
+        `
 
         const outlineStar = `
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"><path fill="" d="M12.526 20.938a1.076 1.076 0 0 1 .948 0l5.755 3.041a1.001 1.001 0 0 0 1.458-1.056l-1.112-6.502a.967.967 0 0 1 .292-.875l4.663-4.499a.984.984 0 0 0-.601-1.694l-6.394-.947a.929.929 0 0 1-.746-.546l-2.896-5.847a.984.984 0 0 0-1.786 0L9.211 7.86a.929.929 0 0 1-.746.546l-6.394.947a.983.983 0 0 0-.6 1.694l4.662 4.5a.965.965 0 0 1 .292.874l-1.112 6.502a1.002 1.002 0 0 0 1.458 1.056l5.755-3.041Z"/><path fill="#000" fill-rule="evenodd" d="M11.06 1.513A2.162 2.162 0 0 1 13 .282c.822 0 1.589.486 1.94 1.23l2.852 5.759 6.272.93c.817.08 1.534.64 1.81 1.416a2.162 2.162 0 0 1-.538 2.266l-4.6 4.438 1.094 6.403a2.179 2.179 0 0 1-.861 2.122 2.18 2.18 0 0 1-2.26.171l-.022-.011L13 22l-5.687 3.006a2.18 2.18 0 0 1-2.282-.16 2.18 2.18 0 0 1-.861-2.122l1.094-6.403-4.6-4.438a2.162 2.162 0 0 1-.538-2.266A2.163 2.163 0 0 1 1.937 8.2l6.272-.929 2.852-5.758Zm4.68 6.847c.301.648.926 1.106 1.635 1.196l6.093.903-4.393 4.24h-.002a2.14 2.14 0 0 0-.642 1.916v.001l1.058 6.188-5.473-2.892a2.248 2.248 0 0 0-2.001-.016l-.03.016-5.473 2.892 1.057-6.188.001-.007a2.14 2.14 0 0 0-.642-1.909L2.532 10.46l6.093-.903a2.105 2.105 0 0 0 1.634-1.196L13 2.826l2.74 5.534Z" clip-rule="evenodd"/></svg>
@@ -661,9 +660,28 @@
         };
 
         const renderStars = (rating) => {
-            return Array.from({ length: 5 }, (_, i) =>
-                `<span class="star-wrapper" data-index="${i + 1}" style="cursor: pointer; display: inline-block;">${i + 1 <= rating ? filledStar : outlineStar}</span>`
-            ).join('');
+            let fullStars = Math.floor(rating);
+            const decimal = rating - fullStars;
+
+            let hasHalf = false;
+
+            if (decimal >= 0.3 && decimal <= 0.7) {
+                hasHalf = true;
+            } else if (decimal > 0.7) {
+                fullStars += 1;
+            }
+
+            return Array.from({ length: 5 }, (_, i) => {
+                const index = i + 1;
+                let star = outlineStar;
+                if (index <= fullStars) {
+                    star = filledStar;
+                } else if (index === fullStars + 1 && hasHalf) {
+                    star = halfStar;
+                }
+
+                return `<span class="star-wrapper" data-index="${index}" style="cursor: pointer; display: inline-block;">${star}</span>`;
+            }).join('');
         };
 
         const updateStars = (rating) => {
@@ -762,7 +780,7 @@
 
                         restaurantsResult.style.display = "block";
                     } else {
-                        showToast("No results found!");
+                        showToast("Sorry, we didn't find any matches. Please consider broadening your filters or expanding your radius!");
                     }
 
                     document.getElementById("loadMore").style.display = data.hasNextPage ? "flex" : "none";
@@ -877,7 +895,7 @@
                         <div class="stars">
                             ${filledStarSml}
                         </div>
-                        <p>${restaurant.ratingAverage} (${restaurant.ratingCount})</p>
+                        <p>${restaurant.ratingAverage.toFixed(1)} (${restaurant.ratingCount})</p>
                         <p>${renderPrice(restaurant.priceRange)}</p>
                     </div>
                     
@@ -921,6 +939,7 @@
             const toast = document.createElement("div");
             toast.textContent = message;
             toast.style.cssText = `
+                text-align: center;
                 background-color: #333;
                 color: #fff;
                 padding: 12px 20px;
@@ -1054,7 +1073,7 @@
                 priceRange,
                 offerTermsAndConditions,
                 offerIncentiveCaption
-             } = data[index];
+            } = data[index];
 
             const renderButton = (url, label) => url ? `<a href="${url}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
 
@@ -1075,7 +1094,7 @@
                         <div class="stars">
                             ${renderStars(ratingAverage)}
                         </div>
-                        <p>${ratingAverage} (1023)</p>
+                        <p>${ratingAverage.toFixed(1)} (1023)</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 12 12" id="Navigation-Next-Hexagon-2--Streamline-Cyber" height="50" width="50">
@@ -1085,7 +1104,7 @@
                             <path stroke="#555" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M3.895833333333333 4.354166666666666h2.2916666666666665V3.208333333333333l2.2916666666666665 2.0625 -2.2916666666666665 2.0625v-1.1458333333333333H4.583333333333333l-2.0625 1.375 1.375 -3.208333333333333Z" stroke-width="1"></path>
                             <path stroke="#555" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="m9.854166666666666 8.25 -4.583333333333333 2.520833333333333 -4.583333333333333 -2.520833333333333V3.208333333333333l4.583333333333333 -2.520833333333333 4.583333333333333 2.520833333333333v5.041666666666666Z" stroke-width="1"></path>
                         </svg>
-                        <div>
+                        <div style="text-align: center">
                             <p style="color: #555; margin-bottom: 8px;">${address}</p>
                             <p style="color: #555; margin-bottom: 8px;">${city}</p>
                             <p style="color: #555; font-size: 20px; font-weight: 600">${phoneNumber}</p>
@@ -1147,9 +1166,9 @@
                 const dayName = fullDayMap[entry.dayOfWeek] || entry.dayOfWeek;
                 if (!entry.openForBusiness || !entry.dayHours.length) {
                     return `
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; font-size: 14px">
                             <p>${dayName}</p>
-                            <p>Closed</p>
+                            <p style="text-align: right">Closed</p>
                         </div>
                     `;
                 }
@@ -1159,9 +1178,9 @@
                     .join(', ');
 
                 return `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; font-size: 14px">
                         <p>${dayName}</p>
-                        <p>${hoursStr}</p>
+                        <p style="text-align: right">${hoursStr}</p>
                     </div>
                 `;
             }).join('');
