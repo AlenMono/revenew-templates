@@ -136,7 +136,7 @@
             background-color: #ffe;
         }
 
-        .zip-code-input {
+        .input--text {
             min-width: 200px;
             padding: 8px;
             border: 1px solid #ccc;
@@ -205,6 +205,21 @@
 
         .card-opened .arrow-bottom {
             display: block;
+        }
+
+        .input--search {
+            position: relative;
+        }
+
+        .input--search .input--text {
+            padding-left: 28px;
+        }
+
+        .input--search svg {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         #suggestions {
@@ -407,7 +422,7 @@
                                 stroke-width="0.8333"></path>
                         </svg>
                     </div>
-                    <input type="text" id="cityInput" class="zip-code-input" placeholder="Enter City or Zip Code"
+                    <input type="text" id="cityInput" class="input--text" placeholder="Enter City or Zip Code"
                         autocomplete="off" />
 
                 </div>
@@ -418,6 +433,15 @@
                 <label for="radius">Radius</label>
                 <input type="number" id="radius" value="15"
                     style="width: 44px; padding: 6px 8px; border-radius: 6px;" /> miles
+            </div>
+
+            <div class="input--search">
+                <input id="restaurantName" type="text" class="input--text" placeholder="Enter Restaurant Name" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                    <path
+                        d="m14.5 13.793-3.776-3.776a5.509 5.509 0 1 0-.707.707l3.776 3.776ZM2 6.5A4.5 4.5 0 1 1 6.5 11 4.505 4.505 0 0 1 2 6.5Z" />
+                    <path fill="none" d="M0 0h16v16H0Z" />
+                </svg>
             </div>
 
             <div>
@@ -523,7 +547,11 @@
         `;
 
         const halfStar = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="-0.5 -0.5 26 26"><path fill="#8fbffa" d="M12.5 1.562V20.77L7.463 23.27c-1.17.58-2.492-.416-2.327-1.75l.72-5.793-3.848-4.252c-.885-.978-.38-2.585.889-2.833l5.497-1.076 2.669-5.113a1.61 1.61 0 0 1 1.437-.89"/><path fill="#fff" fill-rule="evenodd" d="m12.5 20.77 5.037 2.499c1.17.58 2.492-.416 2.327-1.75l-.72-5.793 3.848-4.252c.885-.978.38-2.585-.889-2.833l-5.497-1.076-2.669-5.113a1.61 1.61 0 0 0-1.437-.89z" clip-rule="evenodd"/><path stroke="#2859c5" stroke-linecap="round" stroke-linejoin="round" d="M12.5 1.562V20.77L7.463 23.27c-1.17.58-2.492-.416-2.327-1.75l.72-5.793-3.848-4.252c-.885-.978-.38-2.585.889-2.833l5.497-1.076 2.669-5.113a1.61 1.61 0 0 1 1.437-.89M12.5 1.562c.31 0 .6.1.873.273M12.5 20.77c.195.097.427.231.687.388m1.887-17.097c.123.243.24.492.351.74.158.352.345.679.56.978m2.578 1.9c.327.11.67.19 1.027.24.322.046.644.1.958.164m2.445 1.095c.196.212.335.458.4.744.074.324.034.659-.089.997m-1.667 2.182c-.23.217-.468.43-.707.636a4.955 4.955 0 0 0-.7.741m-.922 2.899c.012.339.06.683.146 1.029.082.328.16.663.227.997m.045 2.962a1.574 1.574 0 0 1-.582.787 1.568 1.568 0 0 1-.713.26m-2.072-.452c-.244-.107-.49-.227-.734-.354a18.09 18.09 0 0 1-.614-.338"/></svg>
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0592 1.28164C11.2343 0.899776 11.5092 0.576992 11.8525 0.350306C12.1957 0.12362 12.5935 0.00220969 13 0C13.8223 0 14.5897 0.505992 14.9408 1.2806L17.794 7.2765L24.0685 8.24476C24.8859 8.32805 25.6032 8.91109 25.8793 9.71901C26.0153 10.1247 26.0369 10.5624 25.9415 10.9805C25.8461 11.3985 25.6378 11.7795 25.3411 12.0782L20.7392 16.6988L21.8336 23.3652C21.9012 23.7804 21.8564 24.2069 21.7043 24.5971C21.5522 24.9873 21.2987 25.3257 20.9723 25.5745C20.6473 25.817 20.2645 25.9619 19.8658 25.9933C19.467 26.0247 19.0677 25.9414 18.7113 25.7525L18.6893 25.7411L13 22.6114L7.31067 25.7411C6.95267 25.9361 6.54963 26.0239 6.14652 25.9944C5.74341 25.965 5.35608 25.8196 5.02774 25.5745C4.70138 25.3256 4.44798 24.9872 4.29586 24.597C4.14375 24.2069 4.09892 23.7803 4.16638 23.3652L5.26083 16.6988L0.658947 12.0782C0.362226 11.7795 0.153872 11.3985 0.0584989 10.9805C-0.0368742 10.5624 -0.0152814 10.1247 0.120726 9.71901C0.258885 9.3207 0.502155 8.97101 0.822617 8.71006C1.14308 8.4491 1.52775 8.28747 1.93247 8.24372L8.20704 7.2765L11.0592 1.28164ZM15.7411 8.4103C16.0422 9.08496 16.6675 9.5618 17.3768 9.6555L23.4723 10.5956L19.0775 15.0101H19.0755C18.8188 15.2618 18.6259 15.5756 18.5139 15.9236C18.4018 16.2716 18.3741 16.643 18.4332 17.0049L19.4917 23.4485L14.0164 20.4375C13.7066 20.274 13.3647 20.1875 13.0174 20.1846C12.6701 20.1817 12.3268 20.2626 12.0146 20.4209L11.9846 20.4375L6.50934 23.4485L7.56678 17.0059L7.56778 16.9986C7.62568 16.6379 7.59737 16.2679 7.48536 15.9213C7.37335 15.5747 7.18108 15.2621 6.92551 15.0111L2.52771 10.5967L8.62321 9.65654C8.9743 9.60875 9.30814 9.46959 9.59386 9.25194C9.87959 9.0343 10.108 8.74518 10.2579 8.41134L13 2.64865L13.0174 2.68519L15.7411 8.4103Z" fill="black"/>
+                <path d="M12.916 2.14844C13.0865 2.14851 13.2538 2.19937 13.3975 2.29492C13.5409 2.39046 13.655 2.52667 13.7266 2.6875L16.3584 8.21582C16.4182 8.35595 16.512 8.47779 16.6309 8.56836C16.7497 8.65885 16.8898 8.71544 17.0361 8.73242L22.8447 9.62793C23.0168 9.64201 23.1814 9.70721 23.3184 9.81641C23.4554 9.9258 23.5594 10.0747 23.6172 10.2441C23.6749 10.4135 23.6847 10.5967 23.6445 10.7715C23.6043 10.9463 23.5158 11.1056 23.3906 11.2295L19.1543 15.4834C19.0476 15.5873 18.9672 15.7171 18.9209 15.8613C18.8746 16.0058 18.8632 16.1606 18.8887 16.3105L19.8994 22.458C19.9289 22.6328 19.9107 22.813 19.8467 22.9775C19.7826 23.142 19.6752 23.2846 19.5371 23.3887C19.399 23.4927 19.2355 23.5544 19.0654 23.5664C18.8953 23.5784 18.7256 23.5397 18.5752 23.4561L13.3467 20.5811C13.2128 20.5127 13.0652 20.4776 12.916 20.4775H12.9141V2.14941L12.916 2.14844Z" fill="white"/>
+                <path d="M12.9121 2.14844C12.7415 2.14844 12.5744 2.19931 12.4307 2.29492C12.287 2.39052 12.1722 2.52647 12.1006 2.6875L9.46973 8.21582C9.4099 8.35592 9.31613 8.4778 9.19727 8.56836C9.07836 8.65893 8.93843 8.71543 8.79199 8.73242L2.9834 9.62793C2.8112 9.64202 2.64586 9.70704 2.50879 9.81641C2.37172 9.92579 2.2687 10.0747 2.21094 10.2441C2.15319 10.4136 2.14343 10.5967 2.18359 10.7715C2.22377 10.9463 2.31141 11.1056 2.43652 11.2295L6.67285 15.4834C6.77972 15.5873 6.86089 15.7169 6.90723 15.8613C6.95356 16.0058 6.96397 16.1606 6.93848 16.3105L5.92871 22.458C5.89918 22.6328 5.91739 22.813 5.98145 22.9775C6.04551 23.1419 6.15295 23.2846 6.29102 23.3887C6.42907 23.4926 6.59268 23.5544 6.7627 23.5664C6.93276 23.5784 7.10262 23.5397 7.25293 23.4561L12.4814 20.5811C12.6155 20.5126 12.7628 20.4775 12.9121 20.4775H12.9141V2.14941L12.9121 2.14844Z" fill="#FFD709"/>
+            </svg>
         `
 
         const outlineStar = `
@@ -707,15 +735,17 @@
             const radius = document.getElementById("radius").value;
             const sort = document.getElementById("sort").value;
             const openNow = document.getElementById("openNow").checked;
+            const restaurantName = document.querySelector("#restaurantName")?.value?.trim();
 
             const filters = {
-                lat,
-                lon,
+                lat: locationId ? null : lat,
+                lon: locationId ? null : lon,
                 currentTime: new Date().toISOString(),
                 locationId,
                 radius: parseInt(radius),
                 sort,
                 openNow,
+                restaurantName,
                 cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
@@ -725,6 +755,36 @@
 
             fetchRestaurants(filters, isShowMore);
         }
+
+        const handleClickImpression = async () => {
+            try {
+                const response = await fetch('{api}/Restaurant/impression/{bankCustomerOfferGroupId}', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'Authorization': 'Basic ZTUzNGUwM2UtYWQ2NS00MjRhLWI5ZmYtMzc0NmM0NWMxODhhLTM1MDE2OTQ4LTlmZTctNDUzYy05OWQxLTk4NjZmZmIzNDEyYy00MDQ2ODhmNC03NGI2LTRlOTAtYTFhYS1hYmM1NTBjZTRhYTE='
+                    },
+                    body: JSON.stringify({ 
+                        event: ["click", "view"]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                if (!text) {
+                    console.warn("Empty response body");
+                    return {};
+                }
+
+                return JSON.parse(text);
+            } catch (error) {
+                console.error("Error in handleClickImpression:", error);
+            }
+        };
 
         const fetchRestaurants = async (filters, isShowMore) => {
             //const api = 'http://localhost:60839/api';
@@ -803,6 +863,7 @@
             document.getElementById("radius").value = 15;
             document.getElementById("sort").value = "distance";
             document.getElementById("openNow").checked = false;
+            document.getElementById("cityInput").cityId = null;
 
             document.querySelectorAll(".cuisine-group button, .price-group button").forEach((btn) => {
                 btn.classList.remove("selected");
@@ -879,6 +940,8 @@
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
                 card.classList = "results__list__item";
+
+                card.addEventListener("click", handleClickImpression);
 
                 card.innerHTML = `
                     <div class="results__list__item__header">
@@ -1017,6 +1080,9 @@
             leftArrow.addEventListener("click", () => updateSlide(currentIndex - 1));
             rightArrow.addEventListener("click", () => updateSlide(currentIndex + 1));
 
+            leftArrow.addEventListener("click", handleClickImpression)
+            rightArrow.addEventListener("click", handleClickImpression)
+
             updateArrows();
 
             sliderWrapper.appendChild(leftArrow);
@@ -1075,7 +1141,7 @@
                 offerIncentiveCaption
             } = data[index];
 
-            const renderButton = (url, label) => url ? `<a href="${url}" class="btn--primary" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+            const renderButton = (url, label) => url ? `<a href="${url}" class="btn--primary" onClick="handleClickImpression()" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
 
             const buttonsHTML = `
                 <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px; gap: 8px">
@@ -1097,7 +1163,7 @@
                         <p>${ratingAverage.toFixed(1)} (1023)</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 12 12" id="Navigation-Next-Hexagon-2--Streamline-Cyber" height="50" width="50">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.5 -0.5 12 12" id="Navigation-Next-Hexagon-2--Streamline-Cyber" height="50" width="50" onclick="handleClickImpression()">
                             <desc>
                                 Navigation Next Hexagon 2 Streamline Icon: https://streamlinehq.com
                             </desc>
