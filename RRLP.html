@@ -475,12 +475,9 @@
         </div>
 
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="price-group">
+            <div class="price-group" style="display: flex; align-items: center; gap: 8px;">
                 <label style="font-weight: bold;">Price</label>
-                <button onclick="selectPrice(this)">$</button>
-                <button onclick="selectPrice(this)">$$</button>
-                <button onclick="selectPrice(this)">$$$</button>
-                <button onclick="selectPrice(this)">$$$$</button>
+                <div style="display: flex; align-items: center;" id="priceList"></div>
             </div>
 
             <div class="" style="display: flex; align-items: center; gap: 8px">
@@ -529,6 +526,7 @@
         const starContainer = document.getElementById('starRating');
         const successCard = document.getElementById('successCard');
         const restaurantsResult = document.getElementById('restaurantsResult');
+        const priceGroup = document.getElementById('price-group-container');
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
@@ -678,8 +676,9 @@
         };
 
         const selectPrice = (button) => {
+            const priceLevel = button.dataset.key;
+
             button.classList.toggle("selected");
-            const priceLevel = button.innerText.trim().lastIndexOf('$') + 1;
 
             if (button.classList.contains("selected")) {
                 selectedPrices.add(priceLevel);
@@ -759,7 +758,7 @@
 
         const handleClickImpression = async (id) => {
             try {
-                const response = await fetch('{api}/Restaurant/impression/{bankCustomerOfferGroupId}', {
+                const response = await fetch('{api}Restaurant/impression/{bankCustomerOfferGroupId}', {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -824,6 +823,7 @@
                     console.log("Filtered Data:", data);
 
                     showCuisineList(data.cuisine);
+                    showPriceList(data.priceRange);
 
                     if (data.restaurants.length > 0) {
                         const combined = [...restaurants, ...data.restaurants];
@@ -898,6 +898,29 @@
                 });
 
                 cuisineList.appendChild(cuisineButton);
+            });
+        };
+
+        const showPriceList = (priceData) => {
+            if (!priceData) return "";
+
+            const priceList = document.getElementById("priceList");
+            priceList.innerHTML = "";
+
+            Object.entries(priceData).forEach(([key, value]) => {
+                const priceButton = document.createElement("button");
+                priceButton.textContent = value;
+                priceButton.dataset.key = key; // Store the key in a data attribute
+
+                if (selectedPrices.has(key)) {
+                    priceButton.classList.add("selected");
+                }
+
+                priceButton.addEventListener("click", () => {
+                    selectPrice(priceButton);
+                });
+
+                priceList.appendChild(priceButton);
             });
         };
 
@@ -1216,7 +1239,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <p style="font-weight: bold;">Price Range:</p>
                             <p>
-                                ${renderPrice(priceRange)}
+                                ${showPriceList(priceRange)}
                             </p>
                         </div>
 
