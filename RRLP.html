@@ -528,6 +528,7 @@
         const container = document.getElementById("cardsContainer");
         const starContainer = document.getElementById('starRating');
         const successCard = document.getElementById('successCard');
+        const restaurantsResult = document.getElementById('restaurantsResult');
 
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
@@ -756,7 +757,7 @@
             fetchRestaurants(filters, isShowMore);
         }
 
-        const handleClickImpression = async () => {
+        const handleClickImpression = async (id) => {
             try {
                 const response = await fetch('{api}/Restaurant/impression/{bankCustomerOfferGroupId}', {
                     method: 'POST',
@@ -765,7 +766,8 @@
                         'Content-Type': 'application/json; charset=UTF-8',
                         'Authorization': 'Basic ZTUzNGUwM2UtYWQ2NS00MjRhLWI5ZmYtMzc0NmM0NWMxODhhLTM1MDE2OTQ4LTlmZTctNDUzYy05OWQxLTk4NjZmZmIzNDEyYy00MDQ2ODhmNC03NGI2LTRlOTAtYTFhYS1hYmM1NTBjZTRhYTE='
                     },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
+                        retailerId: id,
                         event: ["click", "view"]
                     })
                 });
@@ -802,11 +804,13 @@
                 }
             })
                 .then(response => {
+                    showLoading(false);
+                    showRestaurantListCard([])
+                    showToast("Sorry, we didn't find any matches. Please consider broadening your filters or expanding your radius!");
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-
-                    showLoading(false);
 
                     return response.text().then(text => {
                         if (!text) {
@@ -839,7 +843,9 @@
                         }
 
                         restaurantsResult.style.display = "block";
+                        showToast(false);
                     } else {
+                        showRestaurantListCard([])
                         showToast("Sorry, we didn't find any matches. Please consider broadening your filters or expanding your radius!");
                     }
 
@@ -935,13 +941,18 @@
         };
 
         const showRestaurantListCard = (data) => {
+            if (!data || data.length === 0) {
+                restaurantsResult.style.display = "none";
+            }
+
             container.innerHTML = "";
 
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
                 card.classList = "results__list__item";
+                console.log(restaurant);
 
-                card.addEventListener("click", handleClickImpression);
+                card.addEventListener("click", () => handleClickImpression(restaurant.retailerId));
 
                 card.innerHTML = `
                     <div class="results__list__item__header">
@@ -964,7 +975,7 @@
                     
 
                     <div style="display: flex; align-items: center; gap: 6px">
-                        <div>${restaurant.cuisine}</div>
+                        <div>${restaurant.cuisine || ''}</div>
                         <svg fill="#000000" height="14px" width="14px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
                             viewBox="0 0 51.636 51.636" xml:space="preserve">
                             <path d="M51.353,0.914c-0.295-0.305-0.75-0.39-1.135-0.213L0.583,23.481c-0.399,0.184-0.632,0.605-0.574,1.041
@@ -999,6 +1010,14 @@
         function showToast(message) {
             const container = document.getElementById("toast-container");
 
+            container.innerHTML = "";
+
+            if (!message) {
+                return container.style.display = "none";
+            }
+
+            container.style.display = "block";
+
             const toast = document.createElement("div");
             toast.textContent = message;
             toast.style.cssText = `
@@ -1023,7 +1042,7 @@
             }, 10000);
         }
 
-        const showImageSlider = (images) => {
+        const showImageSlider = (images, id) => {
             const imgArr = typeof images === 'string' ? JSON.parse(images) : images;
             const container = document.getElementById("carousel-container");
 
@@ -1080,8 +1099,8 @@
             leftArrow.addEventListener("click", () => updateSlide(currentIndex - 1));
             rightArrow.addEventListener("click", () => updateSlide(currentIndex + 1));
 
-            leftArrow.addEventListener("click", handleClickImpression)
-            rightArrow.addEventListener("click", handleClickImpression)
+            leftArrow.addEventListener("click", () => handleClickImpression(id))
+            rightArrow.addEventListener("click", () => handleClickImpression(id))
 
             updateArrows();
 
@@ -1136,12 +1155,21 @@
                 phoneNumber,
                 offerIncentiv,
                 offerDetails,
+                retailerId,
                 priceRange,
                 offerTermsAndConditions,
                 offerIncentiveCaption
             } = data[index];
 
-            const renderButton = (url, label) => url ? `<a href="${url}" class="btn--primary" onClick="handleClickImpression()" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+            const renderButton = (url, label, retailerId) =>
+                url ? `<a href="${url}" target="_blank" class="btn--primary" data-retailer-id="${retailerId}" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+
+            document.addEventListener('click', function (event) {
+                const button = event.target.closest('.btn--primary');
+                if (button && button.dataset.retailerId) {
+                    handleClickImpression(button.dataset.retailerId);
+                }
+            });
 
             const buttonsHTML = `
                 <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px; gap: 8px">
@@ -1206,7 +1234,7 @@
 
             cardElements[index].classList.add("card-opened");
 
-            showImageSlider(data[index].images);
+            showImageSlider(data[index].images, retailerId);
         }
 
         const showWorkingHours = (hours) => {
