@@ -757,7 +757,7 @@
             fetchRestaurants(filters, isShowMore);
         }
 
-        const handleClickImpression = async (id) => {
+        const handleClickImpression = async (id, event) => {
             try {
                 const response = await fetch('{api}/Restaurant/impression/{bankCustomerOfferGroupId}', {
                     method: 'POST',
@@ -768,7 +768,7 @@
                     },
                     body: JSON.stringify({
                         retailerId: id,
-                        event: ["click", "view"]
+                        event: event || ["click", "view"]
                     })
                 });
 
@@ -1099,8 +1099,8 @@
             leftArrow.addEventListener("click", () => updateSlide(currentIndex - 1));
             rightArrow.addEventListener("click", () => updateSlide(currentIndex + 1));
 
-            leftArrow.addEventListener("click", () => handleClickImpression(id))
-            rightArrow.addEventListener("click", () => handleClickImpression(id))
+            leftArrow.addEventListener("click", () => handleClickImpression(id, ['event']))
+            rightArrow.addEventListener("click", () => handleClickImpression(id, ['event']))
 
             updateArrows();
 
@@ -1216,7 +1216,7 @@
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <p style="font-weight: bold;">Price Range:</p>
                             <p>
-                                ${renderPrice(priceRange)}
+                                ${priceRange}
                             </p>
                         </div>
 
