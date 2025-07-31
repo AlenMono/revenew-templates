@@ -757,7 +757,7 @@
             fetchRestaurants(filters, isShowMore);
         }
 
-        const handleClickImpression = async (id, event) => {
+        const handleClickImpression = async (id, event, impressionOptions) => {
             try {
                 const response = await fetch('{api}/Restaurant/impression/{bankCustomerOfferGroupId}', {
                     method: 'POST',
@@ -768,7 +768,8 @@
                     },
                     body: JSON.stringify({
                         retailerId: id,
-                        event: event || ["click", "view"]
+                        event: event || ["click", "view"],
+                        ...impressionOptions
                     })
                 });
 
@@ -950,7 +951,6 @@
             data.forEach((restaurant, index) => {
                 const card = document.createElement("div");
                 card.classList = "results__list__item";
-                console.log(restaurant);
 
                 card.addEventListener("click", () => handleClickImpression(restaurant.retailerId));
 
@@ -1157,19 +1157,22 @@
                 offerDetails,
                 retailerId,
                 priceRange,
+                cuisines,
                 offerTermsAndConditions,
+                locationUrl,
                 offerIncentiveCaption
             } = data[index];
 
-            const renderButton = (url, label, retailerId) =>
-                url ? `<a href="${url}" target="_blank" class="btn--primary" data-retailer-id="${retailerId}" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
 
-            document.addEventListener('click', function (event) {
-                const button = event.target.closest('.btn--primary');
-                if (button && button.dataset.retailerId) {
-                    handleClickImpression(button.dataset.retailerId);
-                }
-            });
+            const renderButton = (url, label, retailerId) =>
+                url ? `<a href="${url}" class="btn--primary" data-retailer-id="${retailerId}" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+
+            // document.addEventListener('click', function (event) {
+            //     const button = event.target.closest('.btn--primary');
+            //     if (button && button.dataset.retailerId) {
+            //         handleClickImpression(button.dataset.retailerId);
+            //     }
+            // });
 
             const buttonsHTML = `
                 <div style="display: flex; justify-content: center; width: 100%; margin-top: 12px; gap: 8px">
@@ -1191,7 +1194,10 @@
                         <p>${ratingAverage.toFixed(1)} (1023)</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
-                        <img src="https://revenew-public-staging.s3.us-east-2.amazonaws.com/Images/MapsArrow.png" height="60px" />
+                        <a href="${locationUrl}" target="_blank" id="location-url">
+                            <img src="https://revenew-public-staging.s3.us-east-2.amazonaws.com/Images/MapsArrow.png" height="60px" id="location-url-img" />
+                        </a>
+
                         <div style="text-align: center">
                             <p style="color: #555; margin-bottom: 8px;">${address}</p>
                             <p style="color: #555; margin-bottom: 8px;">${city}</p>
@@ -1219,6 +1225,14 @@
                                 ${priceRange}
                             </p>
                         </div>
+                        ${cuisines && cuisines.length > 0 ? `
+                            <div style="display: flex; flex-wrap: wrap, align-items: center; gap: 12px">
+                                <p style="font-weight: bold;">Cuisines:</p>
+                                <div style="display: flex; flex-wrap: wrap;">
+                                    ${cuisines.map(item => `<div style="margin-left: 6px">${item}</div>`).join(', ')}
+                                </div>
+                            </div>
+                        ` : ''}
 
                         ${buttonsHTML}
                     </div>
@@ -1263,7 +1277,7 @@
 
                 const hoursStr = entry.dayHours
                     .map(period => `${period.open} – ${period.close}`)
-                    .join(', ');
+                    .join(',<br />');
 
                 return `
                     <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; font-size: 14px">
