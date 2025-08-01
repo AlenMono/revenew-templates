@@ -222,7 +222,7 @@
             transform: translateY(-50%);
         }
 
-        #suggestions {
+        .dropdown {
             display: none;
             list-style: none;
             padding-left: 0;
@@ -236,8 +236,12 @@
             z-index: 10;
         }
 
-        #suggestions li:hover {
+        .dropdown li:hover {
             background-color: #f0f0f0;
+        }
+
+        .dropdown.is-open {
+            display: block;
         }
 
         .results__list {
@@ -426,7 +430,7 @@
                         autocomplete="off" />
 
                 </div>
-                <ul id="suggestions"></ul>
+                <ul id="suggestions" class="dropdown"></ul>
             </div>
 
             <div>
@@ -442,6 +446,8 @@
                         d="m14.5 13.793-3.776-3.776a5.509 5.509 0 1 0-.707.707l3.776 3.776ZM2 6.5A4.5 4.5 0 1 1 6.5 11 4.505 4.505 0 0 1 2 6.5Z" />
                     <path fill="none" d="M0 0h16v16H0Z" />
                 </svg>
+
+                <ul id="restaurantNameSuggestions" class="dropdown"></ul>
             </div>
 
             <div>
@@ -525,6 +531,9 @@
     <script>
         const input = document.getElementById("cityInput");
         const suggestions = document.getElementById("suggestions");
+        const restaurantName = document.querySelector("#restaurantName");
+        const restaurantNameSuggestions = document.getElementById("restaurantNameSuggestions");
+
         const container = document.getElementById("cardsContainer");
         const starContainer = document.getElementById('starRating');
         const successCard = document.getElementById('successCard');
@@ -533,6 +542,7 @@
         const selectedCuisines = new Set();
         const selectedPrices = new Set();
         let restaurants = [];
+        let restaurantsName = [];
 
         let selectedRating = 0;
         let selectedPage = 1;
@@ -596,35 +606,67 @@
                 });
 
                 const data = await res.json();
-                displaySuggestions(data || []);
+                displaySuggestions(data || [], suggestions, input);
             } catch (err) {
                 console.error("City lookup failed:", err);
             }
         }
 
-        const displaySuggestions = (cities) => {
-            suggestions.innerHTML = "";
-            suggestions.style.display = cities.length ? "block" : "none";
+        restaurantName.addEventListener('click', async () => {
+            await getRestaurantsName()
 
-            cities.forEach((city) => {
+            displaySuggestions(restaurantsName, restaurantNameSuggestions, restaurantName);
+        })
+
+        const displaySuggestions = (data, el, inputEl) => {
+            el.innerHTML = "";
+
+            if (data.length) {
+                el.classList.add("is-open");
+            } else {
+                el.classList.remove("is-open");
+                return;
+            }
+
+            data.forEach((city) => {
                 const li = document.createElement("li");
                 li.textContent = city.name;
 
-                li.style.cursor = "pointer";
-                li.style.padding = "8px 10px";
-                li.style.fontSize = "14px";
-
-                li.addEventListener("click", () => {
-                    input.cityId = city.id;
-                    input.value = city.name;
-
-                    suggestions.innerHTML = "";
-                    suggestions.style.display = "none";
+                Object.assign(li.style, {
+                    cursor: "pointer",
+                    padding: "8px 10px",
+                    fontSize: "14px"
                 });
 
-                suggestions.appendChild(li);
+                li.addEventListener("click", () => {
+                    inputEl.cityId = city.id;
+                    inputEl.value = city.name;
+
+                    el.innerHTML = "";
+                    el.classList.remove("is-open");
+                    removeOutsideClickListener();
+                });
+
+                el.appendChild(li);
             });
-        }
+
+            const handleClickOutside = (event) => {
+                if (!el.contains(event.target) && event.target !== inputEl) {
+                    el.classList.remove("is-open");
+                    el.innerHTML = "";
+                    removeOutsideClickListener();
+                }
+            };
+
+            const removeOutsideClickListener = () => {
+                document.removeEventListener("click", handleClickOutside);
+            };
+
+            setTimeout(() => {
+                document.addEventListener("click", handleClickOutside);
+            }, 0);
+        };
+
 
         input.addEventListener(
             "input",
@@ -728,6 +770,7 @@
         function setRating(rating) {
             selectedRating = selectedRating === rating ? 0 : rating;
             renderStars();
+            updateStars();
         }
 
         function applyFilter(isShowMore) {
@@ -736,7 +779,6 @@
             const radius = document.getElementById("radius").value;
             const sort = document.getElementById("sort").value;
             const openNow = document.getElementById("openNow").checked;
-            const restaurantName = document.querySelector("#restaurantName")?.value?.trim();
 
             const filters = {
                 lat: locationId ? null : lat,
@@ -746,7 +788,7 @@
                 radius: parseInt(radius),
                 sort,
                 openNow,
-                restaurantName,
+                restaurantName: restaurantName?.value?.trim(),
                 cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
@@ -755,6 +797,31 @@
             };
 
             fetchRestaurants(filters, isShowMore);
+        }
+
+        const getRestaurantsName = async () => {
+            const locationId = document.getElementById("cityInput").cityId;
+            const radius = document.getElementById("radius").value;
+            const sort = document.getElementById("sort").value;
+            const openNow = document.getElementById("openNow").checked;
+
+            const filters = {
+                lat: locationId ? null : lat,
+                lon: locationId ? null : lon,
+                currentTime: new Date().toISOString(),
+                locationId,
+                radius: parseInt(radius),
+                sort,
+                openNow,
+                restaurantName: restaurantName?.value?.trim(),
+                cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
+                priceRange: Array.from(selectedPrices),
+                minRating: selectedRating,
+                pageNumber: selectedPage,
+                pageSize: 21
+            };
+
+            await fetchRestaurantsName(filters);
         }
 
         const handleClickImpression = async (id, event, impressionOptions) => {
@@ -788,6 +855,45 @@
                 console.error("Error in handleClickImpression:", error);
             }
         };
+
+        const fetchRestaurantsName = async (filters) => {
+            //const api = 'http://localhost:60839/api';
+            const id = ' Sn8FMPcMnUG39jdxk0ezyw'
+            await fetch(`https://api-staging.revenewllc.com/api/Restaurant/searchByName/Iy8RO_OJdEWDIAnKF67Jcw`, {
+                method: "POST",
+                body: JSON.stringify({ ...filters }),
+                credentials: 'include',
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Basic ZTUzNGUwM2UtYWQ2NS00MjRhLWI5ZmYtMzc0NmM0NWMxODhhLTM1MDE2OTQ4LTlmZTctNDUzYy05OWQxLTk4NjZmZmIzNDEyYy00MDQ2ODhmNC03NGI2LTRlOTAtYTFhYS1hYmM1NTBjZTRhYTE="
+                    // "Authorization": "Basic {apiKey}"
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    return response.text().then(text => {
+                        if (!text) {
+                            console.warn("Empty response body");
+                            return {};
+                        }
+                        return JSON.parse(text);
+                    });
+                })
+                .then(data => {
+                    restaurantsName = data.map(item => {
+                        return {
+                            name: item,
+                        }
+                    })
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                });
+
+        }
 
         const fetchRestaurants = async (filters, isShowMore) => {
             //const api = 'http://localhost:60839/api';
@@ -880,6 +986,7 @@
             selectedPrices.clear();
             setRating(0);
             resetLocation();
+            restaurantName.value = '';
         }
 
         const showCuisineList = (dataArray) => {
