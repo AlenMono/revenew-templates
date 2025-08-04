@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1080, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width">
     <title>Filter UI</title>
     <style>
         body {
@@ -417,7 +417,7 @@
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div style="display: flex; align-items: center;">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#000000"
-                            id="Location--Streamline-Tabler-Filled" height="20" width="20">
+                            id="location-svg" height="20" width="20" style="cursor: pointer;">
                             <desc>
                                 Location Streamline Icon: https://streamlinehq.com
                             </desc>
@@ -792,7 +792,7 @@
                 cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
-                pageNumber: selectedPage,
+                pageNumber: 1,
                 pageSize: 21
             };
 
@@ -1278,7 +1278,7 @@
 
 
             const renderButton = (url, label, retailerId) =>
-                url ? `<a href="${url}" class="btn--primary" data-retailer-id="${retailerId}" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
+                url ? `<a href="${url}" target="_blank" class="btn--primary" data-retailer-id="${retailerId}" style="padding: 12px 40px; font-size: 14px">${label}</a>` : '';
 
             // document.addEventListener('click', function (event) {
             //     const button = event.target.closest('.btn--primary');
@@ -1404,11 +1404,15 @@
         }
 
         // GET LOCATION 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
+        const locationSvg = document.getElementById("location-svg");
+
+        locationSvg?.addEventListener("click", () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        })
 
         // Initial render
         updateStars(selectedRating);
