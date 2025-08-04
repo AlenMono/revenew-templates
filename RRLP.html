@@ -792,7 +792,7 @@
                 cuisines: Array.from(selectedCuisines.has("Select All") ? [] : selectedCuisines),
                 priceRange: Array.from(selectedPrices),
                 minRating: selectedRating,
-                pageNumber: 1,
+                pageNumber: isShowMore ? selectedPage : 1,
                 pageSize: 21
             };
 
