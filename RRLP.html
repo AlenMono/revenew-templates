@@ -8,8 +8,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
             width: 1080px;
+            padding: 20px;
             margin: 0 auto;
         }
 
@@ -773,7 +773,7 @@
             updateStars();
         }
 
-        function applyFilter(isShowMore) {
+        function applyFilter(isShowMore = false) {
             showLoading(true);
             const locationId = document.getElementById("cityInput").cityId;
             const radius = document.getElementById("radius").value;
@@ -795,6 +795,10 @@
                 pageNumber: isShowMore ? selectedPage : 1,
                 pageSize: 21
             };
+
+            if(!isShowMore) {
+                selectedPage = 1
+            }
 
             fetchRestaurants(filters, isShowMore);
         }
